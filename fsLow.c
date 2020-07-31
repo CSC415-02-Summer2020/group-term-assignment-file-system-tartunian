@@ -280,12 +280,12 @@ uint64_t LBAread (void * buffer, uint64_t lbaCount, uint64_t lbaPosition)
 	fcntl(partInfop->fd, F_SETLKW, &fl);
 
 	lseek (partInfop->fd, fl.l_start, SEEK_SET);
-	read(partInfop->fd, buffer, fl.l_len);
+	uint64_t retRead = read(partInfop->fd, buffer, fl.l_len);
 
 	fl.l_type = F_UNLCK;
 	fcntl(partInfop->fd, F_SETLKW, &fl);
 	
-	return 0;
+	return retRead / partInfop->blocksize;
 	}
 
 

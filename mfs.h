@@ -31,6 +31,7 @@ void b_close (int fd);
 
 #endif
 
+/* In memory structure defined by linux. */
 
 struct mfs_dirent
 {
@@ -42,11 +43,18 @@ struct mfs_dirent
     char           d_name[256]; /* filename */
 };
 
-/*****TO DO:  Fill in this structure with what your open/read directory needs  *****/
+/* This is the equivalent to an inode in the Unix file system. */
 
 typedef struct
 {
-	int dummy;
+	int inUse;
+	int type;
+	int parent;
+	int children[64];
+	int numChildren;
+	char name[256];
+	int directBlockPointers[64];
+	int numDirectBlockPointers;
 } mfs_DIR;
 
 int mfs_mkdir(const char *pathname, mode_t mode);
