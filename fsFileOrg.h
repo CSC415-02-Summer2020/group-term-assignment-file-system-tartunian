@@ -5,6 +5,7 @@
 
 void fsFileOrgInit();
 
-mfs_DIR* openInode(char*);
+mfs_DIR* openDIR(char*);
+mfs_DIR* openInode(char*,InodeType);
 
 void fsFileOrgEnd();

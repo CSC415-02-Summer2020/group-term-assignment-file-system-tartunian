@@ -45,6 +45,8 @@ struct mfs_dirent
 
 /* This is the equivalent to an inode in the Unix file system. */
 
+typedef enum { I_FILE, I_DIR } InodeType;
+
 typedef struct
 {
 	int inUse;

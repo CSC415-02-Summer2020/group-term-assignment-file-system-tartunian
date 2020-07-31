@@ -23,16 +23,17 @@ int main (int argc, char* argv[]) {
   char fileName0[64] = "/usr/user001/Desktop/file0.txt";
   char fileName1[64] = "/usr/user002/Documents/folder0/file0.txt";
   char fileName2[64] = "/usr/user002/Documents/folder0/file1.txt";
-  uint8_t hashValue[4];
+  char fileName3[64] = "/usr/user002/Documents/folder0/";
 
   fsFileOrgInit();
   
   mfs_DIR* inode;
 
-  inode = openInode(fileName0);
-  inode = openInode(fileName1);
-  inode = openInode(fileName2);
-  inode = openInode(fileName0);
+  inode = openDIR(fileName0);
+  inode = openDIR(fileName1);
+  inode = openDIR(fileName2);
+  inode = openDIR(fileName0);
+  inode = openDIR(fileName3);
 
   fsFileOrgEnd();
 

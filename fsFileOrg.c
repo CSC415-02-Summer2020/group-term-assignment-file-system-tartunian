@@ -17,8 +17,32 @@ void writeInodes() {
   LBAwrite(inodes, getVCB()->totalInodeBlocks, getVCB()->inodeStartBlock);
 }
 
-mfs_DIR* openInode(char* fileName) {
+mfs_DIR* openDIR(char* fileName) {
+  printf("OpenDir: %s\n", fileName);
+  InodeType type = fileName[strlen(fileName)-1] == '/' ? I_DIR : I_FILE;
+
+  char _fileName[MAX_FILENAME_SIZE] = "";
+  strcpy(_fileName, fileName);
+  char dirPath[MAX_FILENAME_SIZE] = "/";
+
+  char* savePointer;
+  char* token = strtok_r(_fileName, "/", &savePointer);
+  do {
+    if(*savePointer == "") {
+      // Last element
+    }
+    strcat(dirPath, token);
+
+    token = strtok_r(0, "/", &savePointer);
+
+  } while(token && *token);
+  printf("\n");
+  return NULL;
+}
+
+mfs_DIR* openInode(char* fileName, InodeType type) {
   printf("---------------------------Opening File-------------------------\n");
+  printf("Filename: %s\n", fileName);
   if(strlen(fileName) > MAX_FILENAME_SIZE) {
     printf("openInode: fileName too long.\n");
     return NULL;
@@ -31,6 +55,9 @@ mfs_DIR* openInode(char* fileName) {
   for(int i=0; i<totalInodes; i++) {
     inode = &inodes[i];
     if(inode->inUse == 0 && firstFreeInodeIndex == -1) {
+      /*
+       * Set properties
+       * */
       firstFreeInodeIndex = i;
     }
     if(!strcmp(inode->name, fileName)) {
