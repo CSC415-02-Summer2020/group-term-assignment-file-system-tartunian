@@ -31,6 +31,9 @@ int main (int argc, char* argv[]) {
   mfs_setcwd(directory);
   printCurrentDirectoryPath();
 
+  char cwd[MAX_FILENAME_SIZE];
+  printf("cwd: %s\n", mfs_getcwd(cwd, MAX_FILENAME_SIZE));
+
   parseFilePath(fileName0);
   printFilePath();
 

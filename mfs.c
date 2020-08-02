@@ -194,13 +194,22 @@ int closedir(mfs_DIR *dirp) {
 }
 
 //8-1-20 Taylor: Initial implementation.
+//8-2-20 Taylor: Modified to copy currentDirectoryPath to buf or set errno per description of getcwd in unistd.h
 char * mfs_getcwd(char *buf, size_t size) {
-  return currentDirectoryPath;
+  if(strlen(currentDirectoryPath) > size) {
+    errno = ERANGE;
+    return NULL;
+  }
+  strcpy(buf, currentDirectoryPath);
+  return buf;
 }
 
 //8-1-20 Taylor: Initial implementation.
-//Note this does not currently check validity of 
-//the path.
+//Note: This does not currently check validity of 
+//      the path.
+//Note: This may need to first check whether the provided path is within limit of MAX_FILENAME_SIZE
+//      and set errno similar to mfs_getcwd.
+
 char * mfs_setcwd(char *buf) {
 
   /* Keep copy of pathname (buf) as a string. */
