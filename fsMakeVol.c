@@ -95,21 +95,36 @@ void fsFree(void* buf, uint64_t blockCount, uint64_t blockPosition) {
 
 /* Checks if there is enough contiguous blocks for a requested number of blocks
 return 0 for free 1 for full */
-int checkIfStorageIsAvalibale(int numberOfRequestedBlocks){
-  int count;
-  // loop over freeMap
+// loop over freeMap
   // increment count when there is a free block
       // (if freemap[i] == 0)
       // else if freemap[i] != 0
       // count = 0;
 
   // if count == numberOfRequestedBlocks return 1
-
-return 0;
+int checkIfStorageIsAvailable(int numberOfRequestedBlocks){ //roughly scratched up, feel free to change or edit
+  int count = 0;
+  for( int i = 0; i < freeMapSize; i++ ) {
+	
+	if( count == numberOfRequestedBlocks ) { //returns 1 when count does = the requested amount
+	  return 1;
+	}
+	
+	if( openVCB_p->freeMap[i] == 0 ) { //increment count for each sequential 0
+	  count++;
+	}
+	
+	if( count > 0 && openVCB_p->freeMap[i] == 1 ) { //if bit = 1, reset count, only resets when count > 0
+	  count = 0; //could reset count only when openVCB_p->freeMap[i] == 1
+	}
+	
+  }
+  return 0;
 }
 
 uint64_t getFreeBlock(){
-
+  
+  
   // loop over freeMap
   // return posion of first free block
 
