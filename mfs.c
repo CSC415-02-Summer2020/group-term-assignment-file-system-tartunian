@@ -3,6 +3,8 @@
 
 mfs_DIR* inodes;
 
+size_t NumberOfElementsInInodesArray = sizeof(inodes)/sizeof(inodes[0]); // calculate the number of elemnts in inodes array
+
 void fsFileOrgInit() {
   printf("---------------------------fsFileOrgInit------------------------\n");
   uint64_t totalBytes = getVCB()->totalInodeBlocks * getVCB()->blockSize;
@@ -77,20 +79,39 @@ void printFilePath() {
   }
 }
 
-mfs_DIR getInode(const char *pathname){
-
+mfs_DIR* getInode(const char *pathname){
   // 1- Loop over inodes
   // 2- find requested node
   // 3- return that node
-  // if does noy exist return NULL
+  // if does not exist return NULL
+  mfs_DIR* returnediNode;
+
+  for (size_t i = 0; i < NumberOfElementsInInodesArray; i++) {
+    if (strcmp(inodes[i].path, pathname) == 0) {
+      returnediNode = &inodes[i];
+      return returnediNode;
+      break;
+    }
+  }
+  return NULL;
 
 }
 
-mfs_DIR getFreeInode(){
-  
+mfs_DIR* getFreeInode(){
   // Search through inodes
   // Return the first avalable inode
-  // Update inUSe int of the reyrned node to 1 (Which means it's in use right now)
+  // Update inUSe int of the returned node to 1 (Which means it's in use right now)
+  // if there is no free inode return NULL
+  mfs_DIR* returnediNode;
+  for (size_t i = 0; i < NumberOfElementsInInodesArray; i++) {
+    if (inodes[i].inUse == 0) { // if the inode inUse equales 0 that means it is free so we return it
+      inodes[i].inUse = 1; // upsdate the node to be in use before returning it
+       returnediNode = &inodes[i];
+      return returnediNode;
+      
+    }
+  }
+  return NULL;
 
 }
 

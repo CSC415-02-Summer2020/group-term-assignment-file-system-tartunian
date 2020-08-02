@@ -58,7 +58,7 @@ typedef struct
 	char children[64][MAX_FILENAME_SIZE]; 
 	int numChildren;
 	char name[MAX_FILENAME_SIZE]; 
-	char path[256];
+	char path[256]; // pathe will include the name, ex. 0/1/2/3/4/x, in tis ex. x is the name of the file
 	int directBlockPointers[64];
 	int numDirectBlockPointers;
 
@@ -83,9 +83,9 @@ void fsFileOrgEnd();
 
 void parseFilePath(const char *pathname);
 void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
-mfs_DIR getInode(const char *pathname);
+mfs_DIR* getInode(const char *pathname);
 
-mfs_DIR getFreeInode();
+mfs_DIR* getFreeInode();
 
 void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_setcwd
 
