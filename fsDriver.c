@@ -1,4 +1,6 @@
-#include "fsFileOrg.h"
+
+
+#include "mfs.h"
 
 int main (int argc, char* argv[]) {
 
@@ -29,11 +31,11 @@ int main (int argc, char* argv[]) {
   
   mfs_DIR* inode;
 
-  inode = openDIR(fileName0);
-  inode = openDIR(fileName1);
-  inode = openDIR(fileName2);
-  inode = openDIR(fileName0);
-  inode = openDIR(fileName3);
+  inode = opendir(fileName0);
+  inode = opendir(fileName1);
+  inode = opendir(fileName2);
+  inode = opendir(fileName0);
+  inode = opendir(fileName3);
 
   fsFileOrgEnd();
 

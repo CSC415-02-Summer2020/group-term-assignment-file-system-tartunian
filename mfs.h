@@ -17,7 +17,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <time.h>
-
+#include "fsMakeVol.h"
+#define MAX_FILENAME_SIZE 256
 // The following should be in b_io.h but included for for completness
 #ifndef _B_IO_H
 #define _B_IO_H
@@ -51,23 +52,41 @@ typedef struct
 {
 	int inUse;
 	int type;
-	int parent;
-	int children[64];
+	char parent[MAX_FILENAME_SIZE];  
+	char children[64][MAX_FILENAME_SIZE]; 
 	int numChildren;
-	char name[256];
+	char name[MAX_FILENAME_SIZE]; 
+	char path[256];
 	int directBlockPointers[64];
 	int numDirectBlockPointers;
+
 } mfs_DIR;
 
 int mfs_mkdir(const char *pathname, mode_t mode);
 int mfs_rmdir(const char *pathname);
-mfs_DIR * opendir(const char *name);
+mfs_DIR * opendir(const char *fileName);
 struct mfs_dirent *readdir(mfs_DIR *dirp);
 int closedir(mfs_DIR *dirp);
 
 char * mfs_getcwd(char *buf, size_t size);
 char * mfs_setcwd(char *buf);   //linux chdir
 
+//*******************************//
+// Added Functions by Team Penta //
+//*******************************//
+
+void fsFileOrgInit();
+void writeInodes();
+void fsFileOrgEnd();
+
+void parseFilePath(const char *pathname);
+mfs_DIR getInode(const char *pathname);
+
+mfs_DIR getFreeInode();
+
+//************************************//
+// End of our Functions by Team Penta //
+//***********************************//
 
 
 struct mfs_stat {

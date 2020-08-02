@@ -18,16 +18,19 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "b_io.h"
+#include "mfs.h"
 
 #define MAXFCBS 20
 #define BUFSIZE 512
 
-typedef struct b_fcb
-	{
+typedef struct b_fcb {
 	int linuxFd;	//holds the systems file descriptor
 	char * buf;		//holds the open file buffer
 	int index;		//holds the current position in the buffer
 	int buflen;		//holds how many valid bytes are in the buffer
+
+	mfs_DIR* inode; //holdsa pointer to the inode associated with the file 
+
 	} b_fcb;
 	
 b_fcb fcbArray[MAXFCBS];

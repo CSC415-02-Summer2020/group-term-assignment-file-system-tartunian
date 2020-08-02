@@ -11,6 +11,7 @@
 *
 **************************************************************/
 
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -33,6 +34,10 @@
 /* Struct for the VCB of the disk. Use allocateVCB to allocate
  * the proper amount of memory.
  */
+
+#ifndef _MAKEVOL
+#define _MAKEVOL
+
 typedef struct {
   char header[16];
   uint64_t volumeSize;
@@ -43,11 +48,11 @@ typedef struct {
   uint64_t inodeStartBlock;
   uint64_t totalInodes;
   uint64_t totalInodeBlocks;
-  struct mfs_dirent rootDir;
+  //struct mfs_dirent rootDir;
   uint64_t freeMapSize;
   uint32_t freeMap[];
 } mfs_VCB;
-
+#endif
 /* Utility function for rounding up integer division. */
 uint64_t ceilDiv(uint64_t, uint64_t);
 
@@ -65,6 +70,14 @@ uint64_t fsWrite(void*, uint64_t, uint64_t);
 
 /* Frees blocks in the freeMap and writes to disk. */
 void fsFree(void*, uint64_t, uint64_t);
+
+/* Checks if there is enough contiguous blocks for a requested number of blocks
+return 0 for free 1 for full */
+int checkIfStorageIsAvalibale(int numberOfRequestedBlocks);
+
+/* Return the first free block */
+
+uint64_t getFreeBlock();
 
 /* Reads the VCB into memory. */
 uint64_t readVCB();

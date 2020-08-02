@@ -88,6 +88,38 @@ void fsFree(void* buf, uint64_t blockCount, uint64_t blockPosition) {
   writeVCB();
 }
 
+
+/************************************/
+//  DONE AARON!! MAYBE!
+/************************************/
+
+/* Checks if there is enough contiguous blocks for a requested number of blocks
+return 0 for free 1 for full */
+int checkIfStorageIsAvalibale(int numberOfRequestedBlocks){
+  int count;
+  // loop over freeMap
+  // increment count when there is a free block
+      // (if freemap[i] == 0)
+      // else if freemap[i] != 0
+      // count = 0;
+
+  // if count == numberOfRequestedBlocks return 1
+
+return 0;
+}
+
+uint64_t getFreeBlock(){
+
+  // loop over freeMap
+  // return posion of first free block
+
+}
+
+/************************************/
+//  AARON JOBS ENDS!
+/************************************/
+
+
 uint64_t readVCB() {
   if(!initialized) {
     printf("readVCB: System not initialized.\n");
@@ -137,11 +169,11 @@ void initializeVCB() {
   printf("initVCB: totalInodeBlocks %ld", openVCB_p->totalInodeBlocks);
 
   /* Initialize properties of the root directory entry. */
-  openVCB_p->rootDir.d_ino = 1;
-  openVCB_p->rootDir.d_off = 1;
-  openVCB_p->rootDir.d_reclen = 16;
-  openVCB_p->rootDir.d_type = '1';
-  sprintf(openVCB_p->rootDir.d_name, "root");
+  // openVCB_p->rootDir.d_ino = 1;
+  // openVCB_p->rootDir.d_off = 1;
+  // openVCB_p->rootDir.d_reclen = 16;
+  // openVCB_p->rootDir.d_type = '1';
+  // sprintf(openVCB_p->rootDir.d_name, "root");
 
   openVCB_p->freeMapSize = freeMapSize;
 
@@ -168,13 +200,13 @@ void initializeInodes() {
   mfs_DIR* inodes = calloc(totalInodeBlocks, blockSize);
   inodes[0].inUse = 1;
   inodes[0].type = 1;
-  inodes[0].parent = 0;
+  //inodes[0].parent = "root";
   sprintf(inodes[0].name, "root_inode");
   inodes[0].numDirectBlockPointers = 0;
   for(int i = 1; i<totalInodes; i++) {
     inodes[i].inUse = 0;
     inodes[i].type = 0;
-    inodes[i].parent = 0;
+    sprintf(inodes[i].parent, "");
     sprintf(inodes[i].name, "unused_inode");
     inodes[i].numDirectBlockPointers = 0;
   }
