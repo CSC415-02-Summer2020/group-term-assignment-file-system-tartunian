@@ -3,14 +3,6 @@
 
 mfs_DIR* inodes;
 
-char** arrayOfCorrentPathLevels;
-int arrayOfCorrentPathLevelsSize;
-
-char** requestedFilePathArray;
-int requestedFilePathArraySize;
-
-
-
 void fsFileOrgInit() {
   printf("---------------------------fsFileOrgInit------------------------\n");
   uint64_t totalBytes = getVCB()->totalInodeBlocks * getVCB()->blockSize;
@@ -26,13 +18,63 @@ void writeInodes() {
   LBAwrite(inodes, getVCB()->totalInodeBlocks, getVCB()->inodeStartBlock);
 }
 
+//8-1-20 Taylor: Initial implementation of parseFilePath.
+char currentDirectoryPath[MAX_FILENAME_SIZE];
+char currentDirectoryPathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE] = { "/" };
+int currentDirectoryPathArraySize = 1;
 
-void parseFilePath(const char *pathname){
+char requestedFilePathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
+int requestedFilePathArraySize;
 
-  // 1- Parse basied on "/"
-  // 2- Update requestedFilePathArray
-  // 3- Update requestedFilePathArraySize
+void parseFilePath(const char *pathname) {
 
+  /* Clear previous count. */
+  requestedFilePathArraySize = 0;
+
+  /* Make mutable copy of pathname. */
+  char _pathname[MAX_FILENAME_SIZE];
+  strcpy(_pathname, pathname);
+
+  /* Setup tokenizer and check for '.' or '..' at beginning. */
+  char* savePointer;
+  char* token = strtok_r(_pathname, "/", &savePointer);
+  int isRelative = !strcmp(token, "..") || !strcmp(token, ".");
+  if(token) {
+    if(isRelative) {
+      for(int i=0; i<currentDirectoryPathArraySize-1; i++) {
+        strcpy(requestedFilePathArray[i], currentDirectoryPathArray[i]);
+        requestedFilePathArraySize++;
+      }
+    }
+  }
+
+  /* Discard '.' or '..'. */
+  if(isRelative) {
+    token = strtok_r(0, "/", &savePointer);
+  }
+
+  while(token && requestedFilePathArraySize < MAX_DIRECTORY_DEPTH) {
+
+    strcpy(requestedFilePathArray[requestedFilePathArraySize], token);
+    requestedFilePathArraySize++;
+    token = strtok_r(0, "/", &savePointer);
+
+  }
+
+}
+
+//8-1-20 Taylor: Added to test parseFileName
+void printFilePath() {
+
+  for(int i=0; i<requestedFilePathArraySize; i++) {
+
+    if(i<requestedFilePathArraySize-1) {
+      printf("Directory %d: %s\n", i, requestedFilePathArray[i]);
+    } else {
+      printf("Filename: %s\n", requestedFilePathArray[i]);
+    }
+
+  }
 }
 
 mfs_DIR getInode(const char *pathname){
@@ -102,8 +144,6 @@ mfs_DIR getFreeInode(){
 // // Get code from preveus assginment 
 // };
 
-
-
 void fsFileOrgEnd() {
   printf("--------------------------fsFileOrgClose------------------------\n");
   free(inodes);
@@ -153,10 +193,43 @@ int closedir(mfs_DIR *dirp) {
   return 0;
 }
 
+//8-1-20 Taylor: Initial implementation.
 char * mfs_getcwd(char *buf, size_t size) {
-  return 0;
+  return currentDirectoryPath;
 }
 
+//8-1-20 Taylor: Initial implementation.
+//Note this does not currently check validity of 
+//the path.
 char * mfs_setcwd(char *buf) {
-  return 0;
-}   //linux chdir
+
+  /* Keep copy of pathname (buf) as a string. */
+  strcpy(currentDirectoryPath, buf);
+  
+  /* Clear previous cwd and parse new path. */
+  currentDirectoryPathArraySize = 0;
+  parseFilePath(buf);
+
+  /* Copy parsed pathname to currentDirectoryPathArray. */
+  for(int i=0; i<requestedFilePathArraySize; i++) {
+    strcpy(currentDirectoryPathArray[i], requestedFilePathArray[i]);
+    currentDirectoryPathArraySize++;
+  }
+
+  return currentDirectoryPath;
+
+}
+
+//8-1-20 Taylor: Added to test mfs_setcwd
+void printCurrentDirectoryPath() {
+
+  for(int i=0; i<currentDirectoryPathArraySize; i++) {
+
+    if(i<currentDirectoryPathArraySize-1) {
+      printf("Directory %d: %s\n", i, currentDirectoryPathArray[i]);
+    } else {
+      printf("Filename: %s\n", currentDirectoryPathArray[i]);
+    }
+
+  }
+}

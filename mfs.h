@@ -18,7 +18,9 @@
 #include <unistd.h>
 #include <time.h>
 #include "fsMakeVol.h"
-#define MAX_FILENAME_SIZE 256
+#define	MAX_FILENAME_SIZE 256
+#define MAX_DIRECTORY_DEPTH 10				//8-1-20 Taylor: Added to limit directory depths
+
 // The following should be in b_io.h but included for for completness
 #ifndef _B_IO_H
 #define _B_IO_H
@@ -80,9 +82,12 @@ void writeInodes();
 void fsFileOrgEnd();
 
 void parseFilePath(const char *pathname);
+void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
 mfs_DIR getInode(const char *pathname);
 
 mfs_DIR getFreeInode();
+
+void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_setcwd
 
 //************************************//
 // End of our Functions by Team Penta //

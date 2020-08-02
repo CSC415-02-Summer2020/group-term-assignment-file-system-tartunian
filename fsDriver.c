@@ -22,10 +22,17 @@ int main (int argc, char* argv[]) {
 
   openVolume(volumeName);
 
-  char fileName0[64] = "/usr/user001/Desktop/file0.txt";
+  char directory[64] = "/usr/user001/home/Documents/";
+  char fileName0[64] = "../Desktop/file0.txt";
   char fileName1[64] = "/usr/user002/Documents/folder0/file0.txt";
   char fileName2[64] = "/usr/user002/Documents/folder0/file1.txt";
   char fileName3[64] = "/usr/user002/Documents/folder0/";
+  
+  mfs_setcwd(directory);
+  printCurrentDirectoryPath();
+
+  parseFilePath(fileName0);
+  printFilePath();
 
   fsFileOrgInit();
   
