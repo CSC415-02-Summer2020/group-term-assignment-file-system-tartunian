@@ -121,12 +121,29 @@ int checkIfStorageIsAvailable(int numberOfRequestedBlocks){ //roughly scratched 
   }
   return 0;
 }
-
+//Loop over freeMap. Return position of first free block
 uint64_t getFreeBlock(){
   
-  
-  // loop over freeMap
-  // return posion of first free block
+    /* 
+  PROBLEM: only if their requesting one block. In the event need more than one, their should
+  be an argument to accept number of blocks like the example in line 154->162
+  */
+  for (int index = 0; index < freeMapSize; index++)
+  {
+    if (openVCB_p->freeMap[index] == 0)
+    {
+      return index; //The position in the VolumeSpaceArray
+    }
+  }
+  /*
+  for (int index = 0; index < freeMapSize; index++)
+  {
+    if (openVCB_p->freeMap[index] == 0 && openVCB_p->freeMap[index + 1])
+    {
+      return index;
+    }
+  }
+*/
 
 }
 
