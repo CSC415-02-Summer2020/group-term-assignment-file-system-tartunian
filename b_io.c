@@ -78,14 +78,25 @@ int b_open (char * filename, int flags)
 	
 	// lets try to open the file before I do too much other work
 	
-	fd = open (filename, flags);
-	if (fd  == -1)
-		return (-1);		//error opening filename
-		
+	//fd = open (filename, flags);
+	//if (fd  == -1)
+	//	return (-1);		//error opening filename
+
+	/* Get inode and check if it exists. */
+	mfs_DIR* inode = getInode(filename);
+	if(!inode) {
+		return -1;
+	}
+
 	//Should have a mutex here
 	returnFd = b_getFCB();				// get our own file descriptor
 										// check for error - all used FCB's
-	fcbArray[returnFd].linuxFd = fd;	// Save the linux file descriptor
+	
+	//fcbArray[returnFd].linuxFd = fd;	// Save the linux file descriptor
+
+	/* Save the inode in the FCB. */
+	fcbArray[returnFd].inode = inode;
+
 	//	release mutex
 	
 	//allocate our buffer

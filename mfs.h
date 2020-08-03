@@ -60,6 +60,11 @@ typedef struct
 	int numChildren;
 	char name[MAX_FILENAME_SIZE]; 
 	char path[256]; // pathe will include the name, ex. 0/1/2/3/4/x, in tis ex. x is the name of the file
+	time_t lastAccessTime;
+	time_t lastModificationTime;
+	time_t lastStatusChangeTime;
+	blkcnt_t sizeInBlocks;
+	off_t sizeInBytes;
 	int directBlockPointers[64];
 	int numDirectBlockPointers;
 

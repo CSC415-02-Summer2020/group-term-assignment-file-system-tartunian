@@ -6,15 +6,20 @@ size_t NumberOfElementsInInodesArray = sizeof(inodes)/sizeof(inodes[0]); // calc
 
 void mfs_init() {
   printf("----------------------------mfs_init----------------------------\n");
+
   uint64_t totalBytes = getVCB()->totalInodeBlocks * getVCB()->blockSize;
   printf("totalInodeBlocks %ld, blockSize %ld\n", getVCB()->totalInodeBlocks, getVCB()->blockSize);
   printf("Allocating %ld bytes for inodes.\n", totalBytes);
+
   inodes = calloc(getVCB()->totalInodeBlocks, getVCB()->blockSize);
   printf("Inodes allocated at %p.\n", inodes);
+
   uint64_t blocksRead = LBAread(inodes, getVCB()->totalInodeBlocks, getVCB()->inodeStartBlock);
   printf("Loaded %ld blocks of inodes into cache.\n", blocksRead);
+  
   if(blocksRead != getVCB()->totalInodeBlocks) {
     printf("Error: Not all inodes loaded into cache.\n");
+    mfs_close();
     exit(0);
   }
 }
@@ -188,8 +193,11 @@ int mfs_rmdir(const char *pathname) {
 }
 
 mfs_DIR* mfs_opendir(const char *fileName) {
-  mfs_DIR* inode = getInode(fileName);
-  return inode ? inode : NULL;
+  int ret = b_open(fileName, 0);
+  if(ret < 0) {
+    return NULL;
+  }
+  return getInode(fileName);
 }
 
 struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
