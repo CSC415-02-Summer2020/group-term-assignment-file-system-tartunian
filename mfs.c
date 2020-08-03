@@ -104,8 +104,6 @@ mfs_DIR* getFreeInode(){
   // if there is no free inode return NULL
   mfs_DIR* returnediNode;
 
-  printf("getFreeInode: # Inodes: %d\n", getVCB()->totalInodes);
-
   for (size_t i = 0; i < getVCB()->totalInodes; i++) {
     if (inodes[i].inUse == 0) { // if the inode inUse equales 0 that means it is free so we return it
       inodes[i].inUse = 1; // upsdate the node to be in use before returning it
@@ -177,8 +175,7 @@ void fsFileOrgEnd() {
 int mfs_mkdir(const char *pathname, mode_t mode) {
    // Parse file name 
   // Add info an inode mfs_DIR
-
-
+  // Add info to parent if necessary
   return 0;
 }
 
@@ -187,26 +184,7 @@ int mfs_rmdir(const char *pathname) {
 }
 
 mfs_DIR* mfs_opendir(const char *fileName) {
-  printf("OpenDir: %s\n", fileName);
-  InodeType type = fileName[strlen(fileName)-1] == '/' ? I_DIR : I_FILE;
-
-  char _fileName[MAX_FILENAME_SIZE] = "";
-  strcpy(_fileName, fileName);
-  char dirPath[MAX_FILENAME_SIZE] = "/";
-
-  char* savePointer;
-  char* token = strtok_r(_fileName, "/", &savePointer);
-  do {
-    if(*savePointer == "") {
-      // Last element
-    }
-    strcat(dirPath, token);
-
-    token = strtok_r(0, "/", &savePointer);
-
-  } while(token && *token);
-  printf("\n");
-  return NULL;
+  return 0;
 }
 
 struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
@@ -267,14 +245,38 @@ void printCurrentDirectoryPath() {
   }
 }
 
+//8-1-20 Taylor: Initial implementation of mfs_isFile and mfs_isDir
 int mfs_isFile(char * path) {
-  return 0;
+  mfs_DIR* inode = getInode(path);
+  return inode ? inode->type == I_FILE : 0;
 }
 
 int mfs_isDir(char * path) {
-  return 0;
+  mfs_DIR* inode = getInode(path);
+  return inode ? inode->type == I_DIR : 0;
 }
 
 int mfs_delete(char* filename) {
+  //Get inode
+  //Get parent
+  //Remove child from parent
+  //Clear properties on child inode so it is not found in search.
+  //Set inuse to false
+  return 0;
+}
+
+//8-2-20 Taylor: Initial implementation of mfs_stat.
+//    mfs_DIR needs rework to contain these fields.
+int mfs_stat(const char *path, struct mfs_stat *buf) {
+  mfs_DIR* inode = getInode(path);
+  if(inode) {
+    buf->st_size = 999;
+    buf->st_blksize = getVCB()->blockSize;
+    buf->st_blocks = 2;
+    buf->st_accesstime = 1;
+    buf->st_modtime = 1;
+    buf->st_createtime = 1;
+    return 1;
+  }
   return 0;
 }

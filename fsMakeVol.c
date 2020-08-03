@@ -13,11 +13,6 @@
 
 #include "fsMakeVol.h"
 
-/* Store this as global var since inodeStartBlock is unknown
- * at compile time and is computed based on VCV_START_BLOCK
- *  and the number of blocks required for the VCB.
- */
-
 int initialized = 0;
 
 char header[16] = "*****PentaFS****";
@@ -276,7 +271,6 @@ void printVCB() {
     }
   }
   printf("VCB Size: %d bytes\n", size);
-  printf("Size of mfs_dirent: %ld bytes\n", sizeof(struct mfs_dirent));
 }
 
 void init(uint64_t _volumeSize, uint64_t _blockSize) {

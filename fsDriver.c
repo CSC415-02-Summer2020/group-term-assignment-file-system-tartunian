@@ -22,6 +22,8 @@ int main (int argc, char* argv[]) {
 
   openVolume(volumeName);
 
+  fsFileOrgInit();
+
   char directory[64] = "/usr/user001/home/Documents/";
   char fileName0[64] = "../Desktop/file0.txt";
   char fileName1[64] = "/usr/user002/Documents/folder0/file0.txt";
@@ -36,16 +38,11 @@ int main (int argc, char* argv[]) {
 
   parseFilePath(fileName0);
   printFilePath();
-
-  fsFileOrgInit();
   
   mfs_DIR* inode;
 
-  inode = opendir(fileName0);
-  inode = opendir(fileName1);
-  inode = opendir(fileName2);
-  inode = opendir(fileName0);
-  inode = opendir(fileName3);
+  inode = getInode(fileName0);
+  inode = getFreeInode();
 
   fsFileOrgEnd();
 

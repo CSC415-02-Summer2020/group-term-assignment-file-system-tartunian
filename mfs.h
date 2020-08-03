@@ -50,10 +50,11 @@ struct mfs_dirent
 
 typedef enum { I_FILE, I_DIR } InodeType;
 
+//8-1-20 Taylor: Changed type from int to InodeType
 typedef struct
 {
 	int inUse;
-	int type;
+	InodeType type;
 	char parent[MAX_FILENAME_SIZE];  
 	char children[64][MAX_FILENAME_SIZE]; 
 	int numChildren;
