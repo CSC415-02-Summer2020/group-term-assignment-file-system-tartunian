@@ -74,7 +74,7 @@ struct mfs_dirent *mfs_readdir(mfs_DIR *dirp);
 int mfs_closedir(mfs_DIR *dirp);
 
 char * mfs_getcwd(char *buf, size_t size);
-int * mfs_setcwd(char *buf);   //linux chdir
+int mfs_setcwd(char *buf);   //linux chdir
 
 int mfs_isFile(char * path);    //return 1 if file, 0 otherwise
 int mfs_isDir(char * path);        //return 1 if directory, 0 otherwise

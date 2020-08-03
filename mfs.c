@@ -29,7 +29,7 @@ char requestedFilePathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
 int requestedFilePathArraySize;
 
 void parseFilePath(const char *pathname) {
-
+  printf("------------------------Parsing File Path-----------------------\n");
   /* Clear previous count. */
   requestedFilePathArraySize = 0;
 
@@ -103,7 +103,10 @@ mfs_DIR* getFreeInode(){
   // Update inUSe int of the returned node to 1 (Which means it's in use right now)
   // if there is no free inode return NULL
   mfs_DIR* returnediNode;
-  for (size_t i = 0; i < NumberOfElementsInInodesArray; i++) {
+
+  printf("getFreeInode: # Inodes: %d\n", getVCB()->totalInodes);
+
+  for (size_t i = 0; i < getVCB()->totalInodes; i++) {
     if (inodes[i].inUse == 0) { // if the inode inUse equales 0 that means it is free so we return it
       inodes[i].inUse = 1; // upsdate the node to be in use before returning it
        returnediNode = &inodes[i];
@@ -183,7 +186,7 @@ int mfs_rmdir(const char *pathname) {
   return 0;
 }
 
-mfs_DIR * opendir(const char *fileName) {
+mfs_DIR* mfs_opendir(const char *fileName) {
   printf("OpenDir: %s\n", fileName);
   InodeType type = fileName[strlen(fileName)-1] == '/' ? I_DIR : I_FILE;
 
@@ -206,11 +209,11 @@ mfs_DIR * opendir(const char *fileName) {
   return NULL;
 }
 
-struct mfs_dirent *readdir(mfs_DIR *dirp) {
+struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
   return 0;
 }
 
-int closedir(mfs_DIR *dirp) {
+int mfs_closedir(mfs_DIR *dirp) {
   return 0;
 }
 
@@ -231,8 +234,8 @@ char * mfs_getcwd(char *buf, size_t size) {
 //Note: This may need to first check whether the provided path is within limit of MAX_FILENAME_SIZE
 //      and set errno similar to mfs_getcwd.
 
-char * mfs_setcwd(char *buf) {
-
+int mfs_setcwd(char *buf) {
+  printf("----------------------------mfs_setcwd--------------------------\n");
   /* Keep copy of pathname (buf) as a string. */
   strcpy(currentDirectoryPath, buf);
   
@@ -262,4 +265,16 @@ void printCurrentDirectoryPath() {
     }
 
   }
+}
+
+int mfs_isFile(char * path) {
+  return 0;
+}
+
+int mfs_isDir(char * path) {
+  return 0;
+}
+
+int mfs_delete(char* filename) {
+  return 0;
 }
