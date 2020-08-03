@@ -38,7 +38,7 @@
 ROOTNAME=fsDriver
 HW=
 FOPTION=
-RUNOPTIONS=SampleVolume 10000000 512
+RUNOPTIONS=SampleVolume 8192 512
 CC=gcc
 CFLAGS= -g -lm -lreadline -I.
 LIBS =pthread

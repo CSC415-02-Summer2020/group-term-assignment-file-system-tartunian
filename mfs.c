@@ -1,12 +1,11 @@
-
 #include "mfs.h"
 
 mfs_DIR* inodes;
 
 size_t NumberOfElementsInInodesArray = sizeof(inodes)/sizeof(inodes[0]); // calculate the number of elemnts in inodes array
 
-void fsFileOrgInit() {
-  printf("---------------------------fsFileOrgInit------------------------\n");
+void mfs_init() {
+  printf("----------------------------mfs_init----------------------------\n");
   uint64_t totalBytes = getVCB()->totalInodeBlocks * getVCB()->blockSize;
   printf("totalInodeBlocks %ld, blockSize %ld\n", getVCB()->totalInodeBlocks, getVCB()->blockSize);
   printf("Allocating %ld bytes for inodes.\n", totalBytes);
@@ -14,6 +13,10 @@ void fsFileOrgInit() {
   printf("Inodes allocated at %p.\n", inodes);
   uint64_t blocksRead = LBAread(inodes, getVCB()->totalInodeBlocks, getVCB()->inodeStartBlock);
   printf("Loaded %ld blocks of inodes into cache.\n", blocksRead);
+  if(blocksRead != getVCB()->totalInodeBlocks) {
+    printf("Error: Not all inodes loaded into cache.\n");
+    exit(0);
+  }
 }
 
 void writeInodes() {
@@ -84,13 +87,14 @@ mfs_DIR* getInode(const char *pathname){
   // 2- find requested node
   // 3- return that node
   // if does not exist return NULL
-  mfs_DIR* returnediNode;
 
-  for (size_t i = 0; i < NumberOfElementsInInodesArray; i++) {
+  printf("getInode: pathname = %s\n", pathname);
+
+  for (size_t i = 0; i < getVCB()->totalInodes; i++) {
+    printf("Searching inodes: %s\n", inodes[i].name);
     if (strcmp(inodes[i].path, pathname) == 0) {
-      returnediNode = &inodes[i];
-      return returnediNode;
-      break;
+      printf("Found inode.\n");
+      return &inodes[i];
     }
   }
   return NULL;
@@ -166,10 +170,10 @@ mfs_DIR* getFreeInode(){
 // // Get code from preveus assginment 
 // };
 
-void fsFileOrgEnd() {
-  printf("--------------------------fsFileOrgClose------------------------\n");
+void mfs_close() {
+  printf("----------------------------mfs_close---------------------------\n");
   free(inodes);
-  }
+}
  
 
 int mfs_mkdir(const char *pathname, mode_t mode) {
@@ -184,7 +188,8 @@ int mfs_rmdir(const char *pathname) {
 }
 
 mfs_DIR* mfs_opendir(const char *fileName) {
-  return 0;
+  mfs_DIR* inode = getInode(fileName);
+  return inode ? inode : NULL;
 }
 
 struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
@@ -206,6 +211,9 @@ char * mfs_getcwd(char *buf, size_t size) {
   return buf;
 }
 
+//8-3-20 Taylor: Function now check for validity of the path. Returns 1 if inode does not exist,
+//      0 otherwise.
+
 //8-1-20 Taylor: Initial implementation.
 //Note: This does not currently check validity of 
 //      the path.
@@ -214,20 +222,26 @@ char * mfs_getcwd(char *buf, size_t size) {
 
 int mfs_setcwd(char *buf) {
   printf("----------------------------mfs_setcwd--------------------------\n");
-  /* Keep copy of pathname (buf) as a string. */
-  strcpy(currentDirectoryPath, buf);
+  
+  /* Check if inode exists. */
+  mfs_DIR* inode = getInode(buf);
+  if(!inode) {
+    return 1;
+  }
   
   /* Clear previous cwd and parse new path. */
+  currentDirectoryPath[0] = '\0';
   currentDirectoryPathArraySize = 0;
   parseFilePath(buf);
 
   /* Copy parsed pathname to currentDirectoryPathArray. */
   for(int i=0; i<requestedFilePathArraySize; i++) {
     strcpy(currentDirectoryPathArray[i], requestedFilePathArray[i]);
+    sprintf(currentDirectoryPath, "%s/%s", currentDirectoryPath, requestedFilePathArray[i]);
     currentDirectoryPathArraySize++;
   }
 
-  return currentDirectoryPath;
+  return 0;
 
 }
 
@@ -247,11 +261,13 @@ void printCurrentDirectoryPath() {
 
 //8-1-20 Taylor: Initial implementation of mfs_isFile and mfs_isDir
 int mfs_isFile(char * path) {
+  printf("------------------------------isFile----------------------------\n");
   mfs_DIR* inode = getInode(path);
   return inode ? inode->type == I_FILE : 0;
 }
 
 int mfs_isDir(char * path) {
+  printf("------------------------------isDir-----------------------------\n");
   mfs_DIR* inode = getInode(path);
   return inode ? inode->type == I_DIR : 0;
 }

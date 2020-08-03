@@ -195,13 +195,6 @@ void initializeVCB() {
   openVCB_p->totalInodeBlocks = totalInodeBlocks;
   printf("initVCB: totalInodeBlocks %ld", openVCB_p->totalInodeBlocks);
 
-  /* Initialize properties of the root directory entry. */
-  // openVCB_p->rootDir.d_ino = 1;
-  // openVCB_p->rootDir.d_off = 1;
-  // openVCB_p->rootDir.d_reclen = 16;
-  // openVCB_p->rootDir.d_type = '1';
-  // sprintf(openVCB_p->rootDir.d_name, "root");
-
   openVCB_p->freeMapSize = freeMapSize;
 
   /* Initialize freeBlockMap to all 0's. */
@@ -227,14 +220,15 @@ void initializeInodes() {
   mfs_DIR* inodes = calloc(totalInodeBlocks, blockSize);
   inodes[0].inUse = 1;
   inodes[0].type = 1;
-  //inodes[0].parent = "root";
-  sprintf(inodes[0].name, "root_inode");
+  strcpy(inodes[0].name, "root");
+  strcpy(inodes[0].path, "root");
+  printf("Root inode name: %s\n", inodes[0].name);
   inodes[0].numDirectBlockPointers = 0;
   for(int i = 1; i<totalInodes; i++) {
     inodes[i].inUse = 0;
     inodes[i].type = 0;
-    sprintf(inodes[i].parent, "");
-    sprintf(inodes[i].name, "unused_inode");
+    strcpy(inodes[i].parent, "");
+    strcpy(inodes[i].name, "unused_inode");
     inodes[i].numDirectBlockPointers = 0;
   }
 
@@ -273,6 +267,7 @@ void printVCB() {
   printf("VCB Size: %d bytes\n", size);
 }
 
+//8-3-20 Taylor: Modified totalInodes calculated to account for the size of the mfs_DIR + DATA_BLOCKS_PER_INODE
 void init(uint64_t _volumeSize, uint64_t _blockSize) {
   printf("------------------------------Init------------------------------\n");
   printf("volumeSize: %ld\n", volumeSize = _volumeSize);
@@ -281,8 +276,10 @@ void init(uint64_t _volumeSize, uint64_t _blockSize) {
   printf("freeMapSize: %d\n", freeMapSize = diskSizeBlocks <= sizeof(uint32_t) * 8 ? 1 : diskSizeBlocks / sizeof(uint32_t) / 8);
   printf("totalVCBBlocks: %d\n", totalVCBBlocks = ceilDiv(sizeof(mfs_VCB) + sizeof(uint32_t[freeMapSize]), blockSize));
   printf("inodeStartBlock: %d\n", inodeStartBlock = VCB_START_BLOCK + totalVCBBlocks);
-  printf("totalInodes: %d\n", totalInodes = ceilDiv(diskSizeBlocks, BLOCKS_PER_INODE));
-  printf("totalInodeBlocks: %d\n", totalInodeBlocks = totalInodes * ceilDiv(sizeof(mfs_DIR), blockSize));
+  printf("totalInodes: %d\n", totalInodes = (diskSizeBlocks - inodeStartBlock) / (DATA_BLOCKS_PER_INODE + ceilDiv(sizeof(mfs_DIR), blockSize)));
+  printf("totalInodeBlocks: %d\n", totalInodeBlocks = ceilDiv(totalInodes * sizeof(mfs_DIR), blockSize));
+  printf("inodeSizeBytes: %ld\n", sizeof(mfs_DIR));
+  printf("inodeSizeBlocks: %ld\n", ceilDiv(sizeof(mfs_DIR), blockSize));
 
   /* Allocate the VCB in memory. */
   int vcbSize = allocateVCB(&openVCB_p);

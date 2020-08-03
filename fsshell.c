@@ -99,15 +99,15 @@
 #define DIRMAX_LEN		4096
 
 /****   SET THESE TO 1 WHEN READY TO TEST THAT COMMAND ****/
-#define CMDLS_ON	0
-#define CMDCP_ON	0
-#define CMDMV_ON	0
-#define CMDMD_ON	0
-#define CMDRM_ON	0
-#define CMDCP2L_ON	0
-#define CMDCP2FS_ON	0
-#define CMDCD_ON	0
-#define CMDPWD_ON	0
+#define CMDLS_ON	1
+#define CMDCP_ON	1
+#define CMDMV_ON	1
+#define CMDMD_ON	1
+#define CMDRM_ON	1
+#define CMDCP2L_ON	1
+#define CMDCP2FS_ON	1
+#define CMDCD_ON	1
+#define CMDPWD_ON	1
 
 
 typedef struct dispatch_t
@@ -675,7 +675,15 @@ void processcommand (char * cmd)
 	cmdv = NULL;
 	}
 
+void initializeFileSystem() {
+	openVolume("SampleVolume");
+	mfs_init();
+}
 
+void closeFileSystem() {
+	mfs_close();
+	closeVolume();
+}
 
 int main (int argc, char * argv[])
 	{
@@ -685,6 +693,8 @@ int main (int argc, char * argv[])
 		
 	using_history();
 	stifle_history(200);	//max history entries
+
+	initializeFileSystem();
 	
 	while (1)
 		{
@@ -719,4 +729,7 @@ int main (int argc, char * argv[])
 		free (cmd);
 		cmd = NULL;		
 		} // end while
+
+		closeFileSystem();
+
 	}

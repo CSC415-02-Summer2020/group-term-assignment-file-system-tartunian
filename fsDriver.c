@@ -22,7 +22,7 @@ int main (int argc, char* argv[]) {
 
   openVolume(volumeName);
 
-  fsFileOrgInit();
+  mfs_init();
 
   char directory[64] = "/usr/user001/home/Documents/";
   char fileName0[64] = "../Desktop/file0.txt";
@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
   inode = getInode(fileName0);
   inode = getFreeInode();
 
-  fsFileOrgEnd();
+  mfs_close();
 
   closeVolume();
 

@@ -85,9 +85,9 @@ int mfs_delete(char* filename);    //removes a file
 // Added Functions by Team Penta //
 //*******************************//
 
-void fsFileOrgInit();
+void mfs_init();																	//8-3-20 Taylor: Changed from fsFileOrgInit
 void writeInodes();
-void fsFileOrgEnd();
+void mfs_close();																		//8-3-20 Taylor: Changed from fsFileOrgEnd
 
 void parseFilePath(const char *pathname);
 void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath

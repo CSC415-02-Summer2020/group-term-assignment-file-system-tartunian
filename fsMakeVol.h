@@ -27,8 +27,7 @@
 #include "bitMap.h"
 #include "mfs.h"
 
-#define BLOCKS_PER_INODE	4	//Number of total disk blocks per one
-					//allocated inode.
+#define DATA_BLOCKS_PER_INODE	4	//Number of data blocks to allocate per on inode.
 #define VCB_START_BLOCK		0
 
 /* Struct for the VCB of the disk. Use allocateVCB to allocate
