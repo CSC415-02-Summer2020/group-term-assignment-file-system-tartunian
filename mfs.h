@@ -64,14 +64,21 @@ typedef struct
 
 } mfs_DIR;
 
+//8-2-20 Taylor: added mfs prefix to readdir, opendir, closedir per Professor's changes
+// Added mfs_isFile, mfs_isFile and mfs_delete
+// Changed mfs_setcwd to return an int instead of char*
 int mfs_mkdir(const char *pathname, mode_t mode);
 int mfs_rmdir(const char *pathname);
-mfs_DIR * opendir(const char *fileName);
-struct mfs_dirent *readdir(mfs_DIR *dirp);
-int closedir(mfs_DIR *dirp);
+mfs_DIR * mfs_opendir(const char *fileName);
+struct mfs_dirent *mfs_readdir(mfs_DIR *dirp);
+int mfs_closedir(mfs_DIR *dirp);
 
 char * mfs_getcwd(char *buf, size_t size);
-char * mfs_setcwd(char *buf);   //linux chdir
+int * mfs_setcwd(char *buf);   //linux chdir
+
+int mfs_isFile(char * path);    //return 1 if file, 0 otherwise
+int mfs_isDir(char * path);        //return 1 if directory, 0 otherwise
+int mfs_delete(char* filename);    //removes a file
 
 //*******************************//
 // Added Functions by Team Penta //
