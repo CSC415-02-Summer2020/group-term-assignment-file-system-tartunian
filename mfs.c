@@ -125,6 +125,8 @@ mfs_DIR* getFreeInode(){
 
 }
 
+
+
 // int b_open (char * filename, int flags){
 
 // // Check flags
