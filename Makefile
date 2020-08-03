@@ -40,7 +40,7 @@ HW=
 FOPTION=
 RUNOPTIONS=SampleVolume 10000000 512
 CC=gcc
-CFLAGS= -g -lm -I.
+CFLAGS= -g -lm -lreadline -I.
 LIBS =pthread
 DEPS = 
 ADDOBJ= fsLow.o b_io.o bitMap.o mfs.o fsMakeVol.o
@@ -50,6 +50,9 @@ OBJ = $(ROOTNAME)$(HW)$(FOPTION).o $(ADDOBJ)
 	$(CC) -c -o $@ $< $(CFLAGS) 
 
 $(ROOTNAME)$(HW)$(FOPTION): $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) -l $(LIBS)
+
+fsshell: fsshell.o $(ADDOBJ)
 	$(CC) -o $@ $^ $(CFLAGS) -l $(LIBS)
 
 clean:
