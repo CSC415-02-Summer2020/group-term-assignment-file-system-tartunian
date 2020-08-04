@@ -283,16 +283,16 @@ int b_read (int fd, char * buffer, int count)
 	if (part2 > 0)		//We need to read to copy more bytes to user
 		{
 		// Handle special case where user is asking for more than a buffer worth
-		if (part2 > BUFSIZE)
+		if (part2 > bufSize)
 			{
-			int blocks = part2 / BUFSIZE; // calculate number of blocks they want
-			bytesRead = read (fcbArray[fd].linuxFd, buffer+part1, blocks*BUFSIZE);
+			int blocks = part2 / bufSize; // calculate number of blocks they want
+			bytesRead = read (fcbArray[fd].linuxFd, buffer+part1, blocks*bufSize);
 			part3 = bytesRead;
 			part2 = part2 - part3;  //part 2 is now < BUFSIZE, or file is exusted
 			}				
 		
 		//try to read BUFSIZE bytes into our buffer
-		bytesRead = read (fcbArray[fd].linuxFd, fcbArray[fd].buf, BUFSIZE);
+		bytesRead = read (fcbArray[fd].linuxFd, fcbArray[fd].buf, bufSize);
 		
 		// error handling here...  if read fails
 		
