@@ -1,5 +1,6 @@
 #include "mfs.h"
 
+
 mfs_DIR* inodes;
 
 size_t NumberOfElementsInInodesArray = sizeof(inodes)/sizeof(inodes[0]); // calculate the number of elemnts in inodes array
@@ -29,6 +30,9 @@ void writeInodes() {
 }
 
 //8-1-20 Taylor: Initial implementation of parseFilePath.
+
+// All path data structures should be linkedLists
+
 char currentDirectoryPath[MAX_FILENAME_SIZE];
 char currentDirectoryPathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE] = { "/" };
 int currentDirectoryPathArraySize = 1;
@@ -36,7 +40,7 @@ int currentDirectoryPathArraySize = 1;
 char requestedFilePathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
 int requestedFilePathArraySize;
 
-void parseFilePath(const char *pathname) {
+void parseFilePath(const char *pathname) { 
   printf("------------------------Parsing File Path-----------------------\n");
   /* Clear previous count. */
   requestedFilePathArraySize = 0;
@@ -127,58 +131,58 @@ mfs_DIR* getFreeInode(){
 
 
 
-// int b_open (char * filename, int flags){
-
-// // Check flags
-// // If flags read only then it is md_cp2l()
-// // If flags write only | Create then it is cmd_cp2fs()
-
-//  // For cmd_cp2l 
-//     // Check if file exist
-//     // if exist just open
-//     // if not exit
-
-//   // For cmd_cp2fs()
-//     // Check if file exist
-//     // if exist just open
-//        // Get inode
-//     // if not create!
-//       // Creat inode
-
-// // Get code from preveus assginment 
-
-// };
-
-// int b_write (int fd, char * buffer, int count) {
-
-// // Check if there is storage
-//   // if there is storage then write
-//   // else exit
-// // get free block to write
+/***************** 8-3-2020 ***********************************/
 
 
-// // Get code from preveus assginment 
 
-// }
+mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if succed and NULL if fales
+  // call checkValidityOfPath()
+  // call getFreeInode(), this function will initialize inUse to 1
+  // getParentPath()
+	// call getInode(path) to for parent
+
+  // initialize:
+                // call setParent() 
+                // 1- InodeType
+                // 2- name
+                // 3- lastAccessTime
+                // 4- lastModificationTime
+}
+
+int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for true
+      // get parent indoe
+      // check numChildren -> if 64 retrun 0
+      // update parent indoe
+        // update:
+            // 1- children array
+            // 2- numChildren
+            // 3- lastAccessTime
+            // 4- lastModificationTime
+            // 5- sizeInBlocks
+            // 6- sizeInBytes
+      // update child inode
+            // 1- parent
+            // 2- path
+}
+
+char* getParentPath(char* buf ,const char* path){// return NULL for fales and a "path" if succeed
+    // parse the requestedFilePathArray into a string the return parent string "path"
+}
+
+int checkValidityOfPath(){ // return 0 for fales and 1 if succeed
+  // loop over the linkedList check all are ture, reyrn 1 PATH IS VALID
+  // if one fales then PATH IS UNVALID
+}
 
 
-// int b_read (int fd, char * buffer, int count){
+/***************************************** 8-3-2020 **************************************************/
 
-// // Get code from preveus assginment 
-// };
-
-// int b_seek (int fd, off_t offset, int whence){
-
-
-// };
-
-// void b_close (int fd){
-
-// // Get code from preveus assginment 
-// };
 
 void mfs_close() {
   printf("----------------------------mfs_close---------------------------\n");
+
+  // free any linedLists
+
   free(inodes);
 }
  
@@ -187,10 +191,12 @@ int mfs_mkdir(const char *pathname, mode_t mode) {
    // Parse file name 
   // Add info an inode mfs_DIR
   // Add info to parent if necessary
+
   return 0;
 }
 
 int mfs_rmdir(const char *pathname) {
+
   return 0;
 }
 
@@ -207,8 +213,12 @@ struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
 }
 
 int mfs_closedir(mfs_DIR *dirp) {
+
+  // 
   return 0;
 }
+
+
 
 //8-1-20 Taylor: Initial implementation.
 //8-2-20 Taylor: Modified to copy currentDirectoryPath to buf or set errno per description of getcwd in unistd.h

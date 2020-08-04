@@ -53,20 +53,20 @@ typedef enum { I_FILE, I_DIR } InodeType;
 //8-1-20 Taylor: Changed type from int to InodeType
 typedef struct
 {
-	int inUse;
-	InodeType type;
-	char parent[MAX_FILENAME_SIZE];  
-	char children[64][MAX_FILENAME_SIZE]; 
-	int numChildren;
-	char name[MAX_FILENAME_SIZE]; 
-	char path[256]; // pathe will include the name, ex. 0/1/2/3/4/x, in tis ex. x is the name of the file
-	time_t lastAccessTime;
-	time_t lastModificationTime;
-	time_t lastStatusChangeTime;
-	blkcnt_t sizeInBlocks;
-	off_t sizeInBytes;
-	int directBlockPointers[64];
-	int numDirectBlockPointers;
+		int inUse; // in b_open for create
+		InodeType type; // in b_open for create
+		char parent[MAX_FILENAME_SIZE];  // in b_open for create
+		char children[64][MAX_FILENAME_SIZE]; // in updateInodewhenCeated()
+		int numChildren; // in updateInodewhenCeated()
+		char name[MAX_FILENAME_SIZE]; // in b_open for create
+		// pathe will include the name, ex. 0/1/2/3/4/x, in tis ex. x is the name of the file
+		char path[256]; // in b_open for create
+		time_t lastAccessTime; // Always whenver opened 
+		time_t lastModificationTime; // in b_write 
+		blkcnt_t sizeInBlocks; // depends
+		off_t sizeInBytes; // depends
+		int directBlockPointers[64]; // in b_write
+		int numDirectBlockPointers; // in b_write
 
 } mfs_DIR;
 
@@ -97,10 +97,15 @@ void mfs_close();																		//8-3-20 Taylor: Changed from fsFileOrgEnd
 void parseFilePath(const char *pathname);
 void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
 mfs_DIR* getInode(const char *pathname);
-
 mfs_DIR* getFreeInode();
-
 void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_setcwd
+
+/* ADDED ON 8-3-2020 */
+// void updateInode(mfs_DIR* inode);
+mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
+int checkValidityOfPath();							   // Duy
+int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
+char* getParentPath(char* buf ,const char* path);		// Duy
 
 //************************************//
 // End of our Functions by Team Penta //

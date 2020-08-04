@@ -1,0 +1,14 @@
+
+
+
+8-3-2020
+
+    // File system does not support recursive folder/file creation. 
+    // MAX children per folder (parent) is 64
+    // Our data alocation is contiguous
+    // b_write by its nature overide files
+
+8-4-2020
+
+
+

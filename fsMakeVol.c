@@ -96,26 +96,32 @@ return 0 for free 1 for full */
       // else if freemap[i] != 0
       // count = 0;
 
+
+
+// merge checkIfStorageIsAvailable() and getFreeBlock() toghather then return the first free block in that contiguous span of blocks
+// return -1 if dose not exists!
+
+
   // if count == numberOfRequestedBlocks return 1
-int checkIfStorageIsAvailable(int numberOfRequestedBlocks){ //roughly scratched up, feel free to change or edit
-  int count = 0;
-  for( int i = 0; i < freeMapSize; i++ ) {
+// int checkIfStorageIsAvailable(int numberOfRequestedBlocks){ //roughly scratched up, feel free to change or edit
+//   int count = 0;
+//   for( int i = 0; i < freeMapSize; i++ ) {
 	
-	if( count == numberOfRequestedBlocks ) { //returns 1 when count does = the requested amount
-	  return 1;
-	}
+// 	if( count == numberOfRequestedBlocks ) { //returns 1 when count does = the requested amount
+// 	  return 1;
+// 	}
 	
-	if( openVCB_p->freeMap[i] == 0 ) { //increment count for each sequential 0
-	  count++;
-	}
+// 	if( openVCB_p->freeMap[i] == 0 ) { //increment count for each sequential 0
+// 	  count++;
+// 	}
 	
-	if( count > 0 && openVCB_p->freeMap[i] == 1 ) { //if bit = 1, reset count, only resets when count > 0
-	  count = 0; //could reset count only when openVCB_p->freeMap[i] == 1
-	}
+// 	if( count > 0 && openVCB_p->freeMap[i] == 1 ) { //if bit = 1, reset count, only resets when count > 0
+// 	  count = 0; //could reset count only when openVCB_p->freeMap[i] == 1
+// 	}
 	
-  }
-  return 0;
-}
+//   }
+//   return 0;
+// }
 //Loop over freeMap. Return position of first free block
 uint64_t getFreeBlock(){
   
@@ -129,6 +135,7 @@ uint64_t getFreeBlock(){
     {
       return index; //The position in the VolumeSpaceArray
     }
+    
   }
   /*
   for (int index = 0; index < freeMapSize; index++)
@@ -139,7 +146,7 @@ uint64_t getFreeBlock(){
     }
   }
 */
-
+return -1;
 }
 
 /************************************/
@@ -181,8 +188,11 @@ void initializeVCB() {
     return;
   }
   printf("------------------------Initializing VCB------------------------\n");
-
-  sprintf(openVCB_p->header, "%s", header);
+ 
+  printf("\n\nDEBUGE-1\n\n");
+  //sprintf(openVCB_p->header, "%s", header); 
+  strcpy(openVCB_p->header, header);
+  printf("\n\nDEBUGE-2\n\n");
 
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;
