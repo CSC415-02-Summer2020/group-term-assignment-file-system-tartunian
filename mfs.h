@@ -18,8 +18,11 @@
 #include <unistd.h>
 #include <time.h>
 #include "fsMakeVol.h"
-#define	MAX_FILENAME_SIZE 256
-#define MAX_DIRECTORY_DEPTH 10				//8-1-20 Taylor: Added to limit directory depths
+#define	MAX_FILENAME_SIZE						256
+#define MAX_DIRECTORY_DEPTH					10				//8-1-20 Taylor: Added to limit directory depths
+#define MAX_DATABLOCK_POINTERS			64
+#define INVALID_DATABLOCK_POINTER		-1
+#define INVALID_INODE_NAME					"unused_inode"
 
 // The following should be in b_io.h but included for for completness
 #ifndef _B_IO_H
@@ -65,7 +68,7 @@ typedef struct
 		time_t lastModificationTime; // in b_write 
 		blkcnt_t sizeInBlocks; // depends
 		off_t sizeInBytes; // depends
-		int directBlockPointers[64]; // in b_write
+		int directBlockPointers[MAX_DATABLOCK_POINTERS]; // in b_write
 		int numDirectBlockPointers; // in b_write
 
 } mfs_DIR;
@@ -106,6 +109,12 @@ mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
 int checkValidityOfPath();							   // Duy
 int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
 char* getParentPath(char* buf ,const char* path);		// Duy
+
+/* ADDED ON 8-4-20 */
+
+/* Writes a buffer to a provided data block, adds blockNumber to inode, updates size and timestamps
+ * of inode, writes inodes to disk. */
+int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber);
 
 //************************************//
 // End of our Functions by Team Penta //

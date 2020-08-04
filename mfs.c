@@ -150,6 +150,8 @@ mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if su
 }
 
 int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for true
+      /* Note: if parent is NULL, remove child from parent, remove parent from child. */
+      
       // get parent indoe
       // check numChildren -> if 64 retrun 0
       // update parent indoe
@@ -167,13 +169,49 @@ int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for t
 
 char* getParentPath(char* buf ,const char* path){// return NULL for fales and a "path" if succeed
     // parse the requestedFilePathArray into a string the return parent string "path"
+    //Copy parent path to buf, return buf
 }
 
 int checkValidityOfPath(){ // return 0 for fales and 1 if succeed
-  // loop over the linkedList check all are ture, reyrn 1 PATH IS VALID
-  // if one fales then PATH IS UNVALID
+  // loop over requestedFilePathArray
+  // assemble each partial path by adding next level
+  // search for partial path with getInode
+  // fail on first not found
 }
 
+int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber) {
+
+  /* Check if dataBlockPointers is full. */
+  int freeIndex = -1;
+  for(int i=0; i<MAX_DATABLOCK_POINTERS; i++) {
+    if(inode->directBlockPointers[i] == INVALID_DATABLOCK_POINTER) {
+      
+      /* Record free dataBlockPointer index. */
+      freeIndex = i;
+      break;
+    }
+  }
+
+  /* If there is no place to put the new dataBlock pointer. Return 0 blocks/bytes written. */
+  if(freeIndex == -1) {
+    return 0;
+  }
+
+  /* Write buffered data to disk, update inode, write inodes to disk. */
+  LBAwrite(buffer, 1, blockNumber);
+
+  inode->directBlockPointers[freeIndex] = blockNumber;
+  inode->numDirectBlockPointers++;
+  inode->sizeInBlocks++;
+  inode->sizeInBytes += bufSizeBytes;
+  inode->lastAccessTime = time(0);
+  inode->lastModificationTime = time(0);
+
+  writeInodes();
+
+  return 1;
+
+}
 
 /***************************************** 8-3-2020 **************************************************/
 

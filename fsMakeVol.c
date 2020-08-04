@@ -238,8 +238,14 @@ void initializeInodes() {
     inodes[i].inUse = 0;
     inodes[i].type = 0;
     strcpy(inodes[i].parent, "");
-    strcpy(inodes[i].name, "unused_inode");
+    strcpy(inodes[i].name, INVALID_INODE_NAME);
+    
+    /* Set all direct block pointers to -1 (invalid). */
+    for(int j=0; j<MAX_DATABLOCK_POINTERS; j++) {
+      inodes[i].directBlockPointers[j] = INVALID_DATABLOCK_POINTER;
+    }
     inodes[i].numDirectBlockPointers = 0;
+    
   }
 
   /* Write inodes to disk. */
