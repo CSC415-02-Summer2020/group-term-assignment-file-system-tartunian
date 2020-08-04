@@ -162,8 +162,6 @@ int b_open (char * filename, int flags)
 	}
 
 
-
-
 // Interface to write a buffer	
 int b_write (int fd, char * buffer, int count)
 	{

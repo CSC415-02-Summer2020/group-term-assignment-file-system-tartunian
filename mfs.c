@@ -133,8 +133,6 @@ mfs_DIR* getFreeInode(){
 
 /***************** 8-3-2020 ***********************************/
 
-
-
 mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if succed and NULL if fales
   mfs_DIR* returnediNode;
   char* parentPath;
@@ -294,6 +292,23 @@ int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64
 /***************************************** Start 8-4-2020 **************************************************/
 
 
+void freeInode(mfs_DIR* node){
+    node->inUse = 0;
+    node->name[0] = NULL;
+    node->path[0] = NULL;
+    node->parent[0] = NULL;
+    node->sizeInBlocks = 0;
+    node->sizeInBytes = 0;
+
+  /* free the data blockes asociated with the file, if we are deleting a file */
+  if(node->type == I_FILE){
+    for (size_t i = 0; i < node->numDirectBlockPointers; i++) {
+      int blockPointer = node->directBlockPointers[i];
+      clearBit(getVCB()->freeMap, blockPointer);
+    }
+  }
+}
+
 /***************************************** END 8-4-2020 **************************************************/
 
 void mfs_close() {
@@ -305,17 +320,46 @@ void mfs_close() {
 }
  
 
-int mfs_mkdir(const char *pathname, mode_t mode) {
+int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -1 if not
    // Parse file name 
   // Add info an inode mfs_DIR
   // Add info to parent if necessary
+  // check if the fiolder already exists
+  char parentPath[256];
+  parseFilePath(pathname);
 
-  return 0;
+  for (size_t i = 0; i < requestedFilePathArraySize - 1; i++) {
+     strcat(parentPath, "/");
+     strcat(parentPath, requestedFilePathArray[i]);
+  }
+  
+  mfs_DIR* parent = getInode(parentPath);
+  if (parent) {
+    for (size_t i = 0; i < parent->numChildren; i++){
+      if(strcmp(parent->children[i], requestedFilePathArray[requestedFilePathArraySize - 1])){
+          printf("Folder already exists!");
+          return -1;
+      }
+    }
+  } else {
+    printf("Something went wrong!");
+    return -1;
+  }
+  
+
+ if( createInode(I_DIR, pathname)){
+   return 0;
+ }
+  return -1;
 }
 
-int mfs_rmdir(const char *pathname) {
-
-  return 0;
+int mfs_rmdir(const char *pathname) { // return 0 for sucsess and -1 if not
+  mfs_DIR* node = getInode(pathname);
+  if (node->type == I_DIR && node->numChildren == 0){
+    freeInode(node);
+    return 0;
+  }
+  return -1;
 }
 
 mfs_DIR* mfs_opendir(const char *fileName) {
