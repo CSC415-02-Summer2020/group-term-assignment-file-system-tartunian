@@ -10,5 +10,6 @@
 
 8-4-2020
 
-
+    // Our file system does not remove dirctories that conatin files or folders.
+    // It only remove empty folders/Dir
 
