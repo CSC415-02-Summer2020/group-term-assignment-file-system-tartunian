@@ -136,17 +136,43 @@ mfs_DIR* getFreeInode(){
 
 
 mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if succed and NULL if fales
-  // call checkValidityOfPath()
-  // call getFreeInode(), this function will initialize inUse to 1
-  // getParentPath()
-	// call getInode(path) to for parent
+  mfs_DIR* returnediNode;
+  char* parentPath;
+  mfs_DIR* parentNode;
 
+  time_t currentTime;
+  /* Obtain current time. */
+  currentTime = time(NULL);
+
+  // call checkValidityOfPath() if fales return NULL
+  if (checkValidityOfPath() == 0){
+    return NULL;
+  };
+  // call getFreeInode(), this function will initialize inUse to 1
+  returnediNode = getFreeInode();
+  getParentPath(parentPath, path); // getParentPath()
+  parentNode = getInode(parentPath);
+ 
   // initialize:
                 // call setParent() 
                 // 1- InodeType
                 // 2- name
                 // 3- lastAccessTime
                 // 4- lastModificationTime
+    
+    if (setParent(parentNode, returnediNode) == 1){
+                returnediNode->type = type;
+                strcpy(returnediNode->name , requestedFilePathArray[requestedFilePathArraySize - 1]);
+                returnediNode->lastAccessTime = currentTime;
+                returnediNode->lastModificationTime = currentTime;
+    } else {
+      return NULL;
+    }
+    
+                
+    
+  return returnediNode;
+
 }
 
 int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for true
@@ -213,8 +239,12 @@ int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64
 
 }
 
-/***************************************** 8-3-2020 **************************************************/
+/***************************************** End 8-3-2020 **************************************************/
 
+/***************************************** Start 8-4-2020 **************************************************/
+
+
+/***************************************** END 8-4-2020 **************************************************/
 
 void mfs_close() {
   printf("----------------------------mfs_close---------------------------\n");
