@@ -92,15 +92,15 @@ void printFilePath() {
 }
 
 mfs_DIR* getInode(const char *pathname){
+  printf("----------------------------getInode----------------------------\n");
   // 1- Loop over inodes
   // 2- find requested node
   // 3- return that node
   // if does not exist return NULL
 
-  printf("getInode: pathname = %s\n", pathname);
+  printf("pathname: %s\n", pathname);
 
   for (size_t i = 0; i < getVCB()->totalInodes; i++) {
-    printf("Searching inodes: %s\n", inodes[i].name);
     if (strcmp(inodes[i].path, pathname) == 0) {
       printf("Found inode.\n");
       return &inodes[i];
@@ -271,11 +271,12 @@ void mfs_close() {
  
 
 int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -1 if not
+  printf("----------------------------mfs_mkdir---------------------------\n");
    // Parse file name 
   // Add info an inode mfs_DIR
   // Add info to parent if necessary
   // check if the fiolder already exists
-  char parentPath[256];
+  char parentPath[256] = "";
   parseFilePath(pathname);
 
   for (size_t i = 0; i < requestedFilePathArraySize - 1; i++) {
@@ -292,7 +293,7 @@ int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -
       }
     }
   } else {
-    printf("Something went wrong!");
+    printf("Something went wrong!\n");
     return -1;
   }
   
@@ -304,6 +305,7 @@ int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -
 }
 
 int mfs_rmdir(const char *pathname) { // return 0 for sucsess and -1 if not
+  printf("----------------------------mfs_rmdir---------------------------\n");
   mfs_DIR* node = getInode(pathname);
   if (node->type == I_DIR && node->numChildren == 0){
     freeInode(node);
@@ -335,6 +337,7 @@ int mfs_closedir(mfs_DIR *dirp) {
 //8-1-20 Taylor: Initial implementation.
 //8-2-20 Taylor: Modified to copy currentDirectoryPath to buf or set errno per description of getcwd in unistd.h
 char * mfs_getcwd(char *buf, size_t size) {
+  printf("----------------------------mfs_getcwd---------------------------\n");
   if(strlen(currentDirectoryPath) > size) {
     errno = ERANGE;
     return NULL;

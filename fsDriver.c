@@ -24,25 +24,12 @@ int main (int argc, char* argv[]) {
 
   mfs_init();
 
-  char directory[64] = "/usr/user001/home/Documents/";
-  char fileName0[64] = "../Desktop/file0.txt";
-  char fileName1[64] = "/usr/user002/Documents/folder0/file0.txt";
-  char fileName2[64] = "/usr/user002/Documents/folder0/file1.txt";
-  char fileName3[64] = "/usr/user002/Documents/folder0/";
+  char rootDirectory[64] = "/root";
+  char directory[64] = "/root/folder0";
   
-  mfs_setcwd(directory);
-  printCurrentDirectoryPath();
+  mfs_setcwd(rootDirectory);
 
-  char cwd[MAX_FILENAME_SIZE];
-  printf("cwd: %s\n", mfs_getcwd(cwd, MAX_FILENAME_SIZE));
-
-  parseFilePath(fileName0);
-  printFilePath();
-  
-  mfs_DIR* inode;
-
-  inode = getInode(fileName0);
-  inode = getFreeInode();
+  mfs_mkdir(directory, 0);
 
   mfs_close();
 
