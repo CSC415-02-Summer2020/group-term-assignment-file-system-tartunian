@@ -309,8 +309,38 @@ int b_read (int fd, char * buffer, int count)
 		}
 	bytesReturned = part1 + part2 + part3;
 	return (bytesReturned);	
+}
+
+int b_seek(int fd, off_t offset, whence) {
+	if(fd >= MAXFCBS || fd < 0 || fcbArray[fd].linuxFd == -1) { //fd is invalid or not being used
+		return -1;
 	}
 	
+	if( whence != SEEK_SET || whence != SEEK_CUR || whence != SEEK_END ) { //whence is invalid
+		return -1;
+	}
+
+	if(offset < 0) { //invalid offset, saying negative is not a proper offset
+		return -1;
+	}
+	
+	//supposed to be able to set locations past the end of file to null
+	if( whence == SEEK_SET ) { //SEEK_SET sets to the next location adjusted at [current index + offset]
+		fcbArray[fd].index += offset; //should be able to go past file size/end of file
+		return fcbArray[fd].index;
+	}
+	
+	else if( whence == SEEK_CUR ) { //SEEK_CUR sets index to be the given offset
+		fcbArray[fd].index = offset;
+		return fcbArray[fd].index;
+	}
+	
+	else if( whence == SEEK_END ) { //SEEK_END sets index to be the [end of the file + offset]
+		fcbArray[fd].index = bufSize + offset;
+		return fcbArray[fd].index;
+	}
+}
+
 // Interface to Close the file	
 void b_close (int fd)
 	{
