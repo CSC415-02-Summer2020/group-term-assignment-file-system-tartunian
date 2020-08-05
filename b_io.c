@@ -311,7 +311,7 @@ int b_read (int fd, char * buffer, int count)
 	return (bytesReturned);	
 }
 
-int b_seek(int fd, off_t offset, whence) {
+int b_seek(int fd, off_t offset, int whence) {
 	if(fd >= MAXFCBS || fd < 0 || fcbArray[fd].linuxFd == -1) { //fd is invalid or not being used
 		return -1;
 	}
@@ -353,7 +353,6 @@ void b_close (int fd)
 			uint64_t indexOfBlock = getFreeBlock();
 			if (indexOfBlock == -1){
 				printf("There is no enough free space!");
-				return 0;
 			} else {
 
 				/* Write any remaining bytes (index) to a new block. */

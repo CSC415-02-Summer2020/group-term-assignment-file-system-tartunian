@@ -25,17 +25,8 @@
 #define INVALID_INODE_NAME					"unused_inode"
 
 // The following should be in b_io.h but included for for completness
-#ifndef _B_IO_H
-#define _B_IO_H
+#include "b_io.h"
 #include <fcntl.h>
-
-int b_open (char * filename, int flags);
-int b_read (int fd, char * buffer, int count);
-int b_write (int fd, char * buffer, int count);
-int b_seek (int fd, off_t offset, int whence);
-void b_close (int fd);
-
-#endif
 
 /* In memory structure defined by linux. */
 
