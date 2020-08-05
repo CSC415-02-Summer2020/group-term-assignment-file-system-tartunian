@@ -97,7 +97,7 @@ void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_set
 /* ADDED ON 8-3-2020 */
 // void updateInode(mfs_DIR* inode);
 mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
-int checkValidityOfPath();							   // Duy
+int checkValidityOfPath(const char* path);							   // Duy
 int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
 char* getParentPath(char* buf ,const char* path);		// Duy
 
