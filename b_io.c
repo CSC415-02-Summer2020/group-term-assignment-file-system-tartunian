@@ -83,6 +83,8 @@ int b_open (char * filename, int flags)
 	int fd;
 	int returnFd;
 	
+	printf("b_open\n");
+
 	/*** TODO ***:  Modify to save or set any information needed*/
 	if (startup == 0) b_init();  //Initialize our system
 	
@@ -123,9 +125,13 @@ int b_open (char * filename, int flags)
 	mfs_DIR* inode = getInode(filename);
 	if(!inode) {
 		
+		printf("b_open: %s does not yet exist.\n", filename);
+
 		/* CMD_CP2FS */
 		/* Check for create mode. */
 		if(flags & O_CREAT) {
+
+			printf("Creating %s\n", filename);
 
 			/* Create child, get parent and set parent. */
 			inode = createInode(I_FILE, filename);
@@ -158,6 +164,9 @@ int b_open (char * filename, int flags)
 		
 	fcb->buflen = 0; 			// have not read anything yet
 	fcb->index = 0;			// have not read anything yet
+
+	printf("b_open: Opened file '%s' with fd %d\n", filename, fd);
+
 	return (returnFd);						// all set
 	}
 
@@ -323,7 +332,7 @@ void b_close (int fd)
 			uint64_t indexOfBlock = getFreeBlock();
 			if (indexOfBlock == -1){
 				printf("There is no enough free space!");
-				return 0;
+				return;
 			} else {
 
 				/* Write any remaining bytes (index) to a new block. */

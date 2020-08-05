@@ -55,6 +55,9 @@ $(ROOTNAME)$(HW)$(FOPTION): $(OBJ)
 fsshell: fsshell.o $(ADDOBJ)
 	$(CC) -o $@ $^ $(CFLAGS) -l $(LIBS)
 
+fileExplorer: fileExplorer.o $(ADDOBJ)
+	$(CC) -o $@ $^ $(CFLAGS) -l $(LIBS)
+
 clean:
 	rm *.o $(ROOTNAME)$(HW)$(FOPTION)
 

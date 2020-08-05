@@ -209,7 +209,12 @@ void initializeVCB() {
 
   /* Initialize freeBlockMap to all 0's. */
   for(int i=0; i<freeMapSize; i++) {
-    openVCB_p->freeMap[i] = 0;//4294967295;
+    openVCB_p->freeMap[i] = 0;
+  }
+
+  /* Set bits in freeMap for VCB and inodes. */
+  for(int i=0; i<inodeStartBlock+totalInodeBlocks; i++) {
+    setBit(openVCB_p->freeMap, i);
   }
 
   printVCB();
@@ -228,17 +233,24 @@ void initializeInodes() {
 
   /* Allocate and initialize inodes. First inode is root directory and has id=1. */
   mfs_DIR* inodes = calloc(totalInodeBlocks, blockSize);
+  inodes[0].id = 0;
   inodes[0].inUse = 1;
-  inodes[0].type = 1;
+  inodes[0].type = I_DIR;
   strcpy(inodes[0].name, "root");
   strcpy(inodes[0].path, "/root");
-  printf("Root inode name: %s\n", inodes[0].name);
+  inodes[0].lastAccessTime = time(0);
+  inodes[0].lastModificationTime = time(0);
   inodes[0].numDirectBlockPointers = 0;
+
+  /* Do all other inodes. */
   for(int i = 1; i<totalInodes; i++) {
+    inodes[i].id = i;
     inodes[i].inUse = 0;
-    inodes[i].type = 0;
+    inodes[i].type = I_UNUSED;
     strcpy(inodes[i].parent, "");
-    strcpy(inodes[i].name, INVALID_INODE_NAME);
+    strcpy(inodes[i].name, "");
+    inodes[i].lastAccessTime = 0;
+    inodes[i].lastModificationTime = 0;
     
     /* Set all direct block pointers to -1 (invalid). */
     for(int j=0; j<MAX_DATABLOCK_POINTERS; j++) {

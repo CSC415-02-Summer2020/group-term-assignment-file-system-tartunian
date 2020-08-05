@@ -51,11 +51,14 @@ struct mfs_dirent
 
 /* This is the equivalent to an inode in the Unix file system. */
 
-typedef enum { I_FILE, I_DIR } InodeType;
+typedef enum { I_FILE, I_DIR, I_UNUSED } InodeType;
+
+char* getInodeTypeName(char* buf, InodeType type);
 
 //8-1-20 Taylor: Changed type from int to InodeType
 typedef struct
 {
+		uint64_t id;
 		int inUse; // in b_open for create
 		InodeType type; // in b_open for create
 		char parent[MAX_FILENAME_SIZE];  // in b_open for create
@@ -111,9 +114,10 @@ int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
 char* getParentPath(char* buf ,const char* path);		// Duy
 
 /* ADDED ON 8-4-20 */
+mfs_DIR* getInodeByID(int id);
 
 /* Writes a buffer to a provided data block, adds blockNumber to inode, updates size and timestamps
- * of inode, writes inodes to disk. */
+ * of inode, writes inodes to disk. Returns number of blocks written. */
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber);
 
 void freeInode(mfs_DIR* node); // Wameedh - rest inode proprties and set it free for reuse
