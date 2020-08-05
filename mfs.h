@@ -116,6 +116,7 @@ char* getParentPath(char* buf ,const char* path);		// Duy
  * of inode, writes inodes to disk. */
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber);
 
+void freeInode(mfs_DIR* node); // Wameedh - rest inode proprties and set it free for reuse
 //************************************//
 // End of our Functions by Team Penta //
 //***********************************//
