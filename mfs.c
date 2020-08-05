@@ -258,6 +258,7 @@ int checkValidityOfPath(const char* path){
 		return 1;
 	}
   }
+  printf("checkValidityOfPath: PATH INVALID\n");
   return 0;
    // return 0 for fales and 1 if succeed
   // loop over requestedFilePathArray
@@ -430,6 +431,7 @@ int mfs_setcwd(char *buf) {
   /* Check if inode exists. */
   mfs_DIR* inode = getInode(buf);
   if(!inode) {
+    printf("DOES NOT EXIST\n");
     return 1;
   }
   
