@@ -47,28 +47,27 @@ typedef enum { I_FILE, I_DIR } InodeType;
 //8-1-20 Taylor: Changed type from int to InodeType
 typedef struct
 {
-		int inUse; // in b_open for create
-		InodeType type; // in b_open for create
-		char parent[MAX_FILENAME_SIZE];  // in b_open for create
-		char children[64][MAX_FILENAME_SIZE]; // in updateInodewhenCeated()
-		int numChildren; // in updateInodewhenCeated()
-		char name[MAX_FILENAME_SIZE]; // in b_open for create
-		// pathe will include the name, ex. 0/1/2/3/4/x, in tis ex. x is the name of the file
-		char path[256]; // in b_open for create
-		time_t lastAccessTime; // Always whenver opened 
-		time_t lastModificationTime; // in b_write 
-		blkcnt_t sizeInBlocks; // depends
-		off_t sizeInBytes; // depends
-		int directBlockPointers[MAX_DATABLOCK_POINTERS]; // in b_write
-		int numDirectBlockPointers; // in b_write
+		int inUse; // holds 0 if inode is free and 1 if it is in use
+		InodeType type; // holds the type of the inode I_FILE or I_DIR
+		char parent[MAX_FILENAME_SIZE];  // holds the parenr path
+		char children[64][MAX_FILENAME_SIZE]; // an array that holds names of the children
+		int numChildren; // holds number of children in a DIR
+		char name[MAX_FILENAME_SIZE]; // holds the file name
+		char path[256]; // holds the path of the file/folder
+		time_t lastAccessTime; // holds time last accessed
+		time_t lastModificationTime; //  holds time last modifed 
+		blkcnt_t sizeInBlocks; // holds the size of the file by block, 512 each block
+		off_t sizeInBytes; // holds the size of the file in bytes
+		int directBlockPointers[MAX_DATABLOCK_POINTERS]; // an array that holds pointers to the data blocks
+		int numDirectBlockPointers; // holds the number of elements in the array of pointers to the data blocks
 
 } mfs_DIR;
 
 //8-2-20 Taylor: added mfs prefix to readdir, opendir, closedir per Professor's changes
 // Added mfs_isFile, mfs_isFile and mfs_delete
 // Changed mfs_setcwd to return an int instead of char*
-int mfs_mkdir(const char *pathname, mode_t mode);
-int mfs_rmdir(const char *pathname);
+int mfs_mkdir(const char *pathname, mode_t mode); // Create a new directory - Wameedh 8-4-2020
+int mfs_rmdir(const char *pathname); // removes a directory, only if it's empty - Wameedh 8-4-2020
 mfs_DIR * mfs_opendir(const char *fileName);
 struct mfs_dirent *mfs_readdir(mfs_DIR *dirp);
 int mfs_closedir(mfs_DIR *dirp);
@@ -90,13 +89,12 @@ void mfs_close();																		//8-3-20 Taylor: Changed from fsFileOrgEnd
 
 void parseFilePath(const char *pathname);
 void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
-mfs_DIR* getInode(const char *pathname);
-mfs_DIR* getFreeInode();
+mfs_DIR* getInode(const char *pathname); // return the inode of a file/folder - Wameedh 8-3-2020
+mfs_DIR* getFreeInode(); // return a new/free inode  - Wameedh 8-3-2020
 void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_setcwd
 
 /* ADDED ON 8-3-2020 */
-// void updateInode(mfs_DIR* inode);
-mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
+mfs_DIR* createInode(InodeType type,const char* path); // create a new inorde and returns it - Wameedh 8-4-2020!
 int checkValidityOfPath(const char* path);							   // Duy
 int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
 char* getParentPath(char* buf ,const char* path);		// Duy
@@ -107,7 +105,7 @@ char* getParentPath(char* buf ,const char* path);		// Duy
  * of inode, writes inodes to disk. */
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber);
 
-void freeInode(mfs_DIR* node); // Wameedh - rest inode proprties and set it free for reuse
+void freeInode(mfs_DIR* node); // Rest inode proprties and set it free for reuse - Wameedh 8-4-2020
 //************************************//
 // End of our Functions by Team Penta //
 //***********************************//
