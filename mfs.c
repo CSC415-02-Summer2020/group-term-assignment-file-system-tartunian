@@ -173,32 +173,9 @@ mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if su
 
 }
 
-int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for false and 1 for true
+int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for true
       /* Note: if parent is NULL, remove child from parent, remove parent from child. */
-
-  if( child == NULL || parent == NULL || parent->numChildren == 64 ) {
-	return 0; //parent/child is invalid or can hold no more children it is full
-  }
-
-  else {
-	//parent is valid so update parent
-	parent->children[numChildren] = child->name;
-	parent->numChildren++;
-
-	//updating time, time returns time since January 1, 1970 00:00:00 UTC
-	time_t newTime;
-	time(&newTime);
-
-	parent->lastAccessTime = newTime;
-	parent->lastModificationTime = newTime;
-	parent->sizeInBlocks += child->sizeInBlocks;
-	parent->sizeInBytes += child->sizeInBytes;
-	
-	//child update
-	child->parent = parent->name;
-	child->path = parent->path + "/" + child->name;
-	return 1; //update complete
-  }
+      
       // get parent indoe
       // check numChildren -> if 64 retrun 0
       // update parent indoe
@@ -214,43 +191,16 @@ int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for false and 1 for t
             // 2- path
 }
 
-char* getParentPath(char* buf ,const char* path){ // return NULL for fales and a "path" if succeed
+char* getParentPath(char* buf ,const char* path){// return NULL for fales and a "path" if succeed
     // parse the requestedFilePathArray into a string the return parent string "path"
     //Copy parent path to buf, return buf
-  mfs_DIR* pInode = getInode(path); //get inode with this path
-  if( pInode == NULL ) { //if an inode could not be found with this path
-	for( int i = 0; i < requestedFilePathArraySize; i++ ) {
-		strcat(buf, "/");
-		strcat(buf, requestedFilePathArray[i]);
-		
-		if( strcmp(buf, path) == 0 ) {
-			return buf;
-		}
-	}
-	return NULL;
-  }
-
-  else {
-	strcpy(buf, pInode->path);
-	return buf;
-  }
 }
 
-int checkValidityOfPath(char* path){ // return 0 for fales and 1 if succeed
+int checkValidityOfPath(){ // return 0 for fales and 1 if succeed
   // loop over requestedFilePathArray
   // assemble each partial path by adding next level
   // search for partial path with getInode
   // fail on first not found
-  char* buf; //buffer to check
-  for( int i = 0; i < requestedFilePathArraySize; i++ ) {
-	strcat(buf, "/");
-	strcat(buf, requestedFilePathArray[i]); //add each level to the buffer
-	
-	if( strcmp(path, buf) == 0 ) { //return true once the path is the same as the buffer
-		return 1;
-	}
-  }
-  return 0;
 }
 
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber) {
