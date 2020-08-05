@@ -231,7 +231,7 @@ void initializeInodes() {
   inodes[0].inUse = 1;
   inodes[0].type = 1;
   strcpy(inodes[0].name, "root");
-  strcpy(inodes[0].path, "root");
+  strcpy(inodes[0].path, "/root");
   printf("Root inode name: %s\n", inodes[0].name);
   inodes[0].numDirectBlockPointers = 0;
   for(int i = 1; i<totalInodes; i++) {

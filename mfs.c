@@ -26,6 +26,7 @@ void mfs_init() {
 }
 
 void writeInodes() {
+  printf("----------------------------writeInodes---------------------------\n");
   LBAwrite(inodes, getVCB()->totalInodeBlocks, getVCB()->inodeStartBlock);
 }
 
@@ -111,6 +112,7 @@ mfs_DIR* getInode(const char *pathname){
 }
 
 mfs_DIR* getFreeInode(){
+  printf("--------------------------getFreeInode--------------------------\n");
   // Search through inodes
   // Return the first avalable inode
   // Update inUSe int of the returned node to 1 (Which means it's in use right now)
@@ -133,7 +135,9 @@ mfs_DIR* getFreeInode(){
 
 /***************** 8-3-2020 ***********************************/
 
-mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if succed and NULL if fales
+mfs_DIR* createInode(InodeType type,const char* path){
+  printf("--------------------------createInode---------------------------\n");
+  // returns an inode if succed and NULL if fales
   mfs_DIR* returnediNode;
   char* parentPath;
   mfs_DIR* parentNode;
@@ -173,7 +177,9 @@ mfs_DIR* createInode(InodeType type,const char* path){ // returns an inode if su
 
 }
 
-int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for true
+int setParent(mfs_DIR* parent, mfs_DIR* child){
+  printf("----------------------------setParent---------------------------\n");
+  // return 0 for fales and 1 for true
       /* Note: if parent is NULL, remove child from parent, remove parent from child. */
       
       // get parent indoe
@@ -191,12 +197,16 @@ int setParent(mfs_DIR* parent, mfs_DIR* child){// return 0 for fales and 1 for t
             // 2- path
 }
 
-char* getParentPath(char* buf ,const char* path){// return NULL for fales and a "path" if succeed
+char* getParentPath(char* buf ,const char* path){
+  printf("-------------------------getParentPath--------------------------\n");
+  // return NULL for fales and a "path" if succeed
     // parse the requestedFilePathArray into a string the return parent string "path"
     //Copy parent path to buf, return buf
 }
 
-int checkValidityOfPath(){ // return 0 for fales and 1 if succeed
+int checkValidityOfPath(){
+  printf("----------------------checkValidityOfPath-----------------------\n");
+   // return 0 for fales and 1 if succeed
   // loop over requestedFilePathArray
   // assemble each partial path by adding next level
   // search for partial path with getInode
@@ -204,6 +214,8 @@ int checkValidityOfPath(){ // return 0 for fales and 1 if succeed
 }
 
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber) {
+  printf("-----------------------writeBufferToInode-----------------------\n");
+
 
   /* Check if dataBlockPointers is full. */
   int freeIndex = -1;
@@ -243,12 +255,13 @@ int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64
 
 
 void freeInode(mfs_DIR* node){
-    node->inUse = 0;
-    node->name[0] = NULL;
-    node->path[0] = NULL;
-    node->parent[0] = NULL;
-    node->sizeInBlocks = 0;
-    node->sizeInBytes = 0;
+  printf("----------------------------freeInode---------------------------\n");
+  node->inUse = 0;
+  node->name[0] = NULL;
+  node->path[0] = NULL;
+  node->parent[0] = NULL;
+  node->sizeInBlocks = 0;
+  node->sizeInBytes = 0;
 
   /* free the data blockes asociated with the file, if we are deleting a file */
   if(node->type == I_FILE){
@@ -293,7 +306,7 @@ int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -
       }
     }
   } else {
-    printf("Something went wrong!\n");
+    printf("Parent '%s' does not exist!\n", parentPath);
     return -1;
   }
   
@@ -315,6 +328,7 @@ int mfs_rmdir(const char *pathname) { // return 0 for sucsess and -1 if not
 }
 
 mfs_DIR* mfs_opendir(const char *fileName) {
+  printf("--------------------------mfs_opendir-------------------------\n");
   int ret = b_open(fileName, 0);
   if(ret < 0) {
     return NULL;
@@ -323,10 +337,12 @@ mfs_DIR* mfs_opendir(const char *fileName) {
 }
 
 struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
+  printf("-------------------------mfs_readdir----------------------------\n");
   return 0;
 }
 
 int mfs_closedir(mfs_DIR *dirp) {
+  printf("---------------------------mfs_closedir--------------------------\n");
 
   // 
   return 0;
@@ -408,6 +424,7 @@ int mfs_isDir(char * path) {
 }
 
 int mfs_delete(char* filename) {
+  printf("---------------------------mfs_delete---------------------------\n");
   //Get inode
   //Get parent
   //Remove child from parent
@@ -419,6 +436,7 @@ int mfs_delete(char* filename) {
 //8-2-20 Taylor: Initial implementation of mfs_stat.
 //    mfs_DIR needs rework to contain these fields.
 int mfs_stat(const char *path, struct mfs_stat *buf) {
+  printf("----------------------------mfs_stat----------------------------\n");
   mfs_DIR* inode = getInode(path);
   if(inode) {
     buf->st_size = 999;
