@@ -189,10 +189,8 @@ void initializeVCB() {
   }
   printf("------------------------Initializing VCB------------------------\n");
  
-  printf("\n\nDEBUGE-1\n\n");
-  //sprintf(openVCB_p->header, "%s", header); 
-  strcpy(openVCB_p->header, header);
-  printf("\n\nDEBUGE-2\n\n");
+
+  sprintf(openVCB_p->header, "%s", header); 
 
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;
