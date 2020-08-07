@@ -21,6 +21,7 @@ void printInode(mfs_DIR* inode) {
   printf("numChildren: %d\n", inode->numChildren);
 
   /* Print block pointers. */
+  printf("directBlockPointers: ");
   for(int i=0; i < inode->numDirectBlockPointers; i++) {
     printf("%d ", inode->directBlockPointers[i]);
   }
