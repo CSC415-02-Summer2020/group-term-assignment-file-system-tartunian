@@ -47,11 +47,11 @@ char* getInodeTypeName(char* buf, InodeType type) {
 
 // All path data structures should be linkedLists
 
-char currentDirectoryPath[MAX_FILENAME_SIZE];
+char currentDirectoryPath[MAX_FILEPATH_SIZE];
 char currentDirectoryPathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
 int currentDirectoryPathArraySize = 0;
 
-char requestedFilePath[MAX_FILENAME_SIZE];
+char requestedFilePath[MAX_FILEPATH_SIZE];
 char requestedFilePathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
 int requestedFilePathArraySize = 0;
 
@@ -65,7 +65,7 @@ void parseFilePath(const char *pathname) {
   requestedFilePathArraySize = 0;
 
   /* Make mutable copy of pathname. */
-  char _pathname[MAX_FILENAME_SIZE];
+  char _pathname[MAX_FILEPATH_SIZE];
   strcpy(_pathname, pathname);
 
   /* Setup tokenizer. */
@@ -184,7 +184,7 @@ mfs_DIR* createInode(InodeType type, const char* path){
   printf("--------------------------createInode---------------------------\n");
   // returns an inode if succed and NULL if fales
   mfs_DIR* inode;
-  char parentPath[MAX_FILENAME_SIZE];
+  char parentPath[MAX_FILEPATH_SIZE];
   mfs_DIR* parentNode;
 
   time_t currentTime;
@@ -253,7 +253,7 @@ int setParent(mfs_DIR* parent, mfs_DIR* child){
             // 1- parent
             // 2- path
   
-  if(parent->numChildren == 64) {
+  if(parent->numChildren == MAX_NUMBER_OF_CHILDREN) {
     printf("Folder '%s' has maximum children.\n", parent->path);
     printf("----------------------------------------------------------------\n");
     return 0;
@@ -312,7 +312,7 @@ char* getParentPath(char* buf ,const char* path){
   /* Parse the path. */
   parseFilePath(path);
 
-  char parentPath[MAX_FILENAME_SIZE] = "";
+  char parentPath[MAX_FILEPATH_SIZE] = "";
 
   /* Loop until the second to last element. */
   for(int i=0; i<requestedFilePathArraySize - 1; i++) {
@@ -514,7 +514,7 @@ struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
   }
   
   /* Get child inode. */
-  char childPath[MAX_FILENAME_SIZE];
+  char childPath[MAX_FILEPATH_SIZE];
   sprintf(childPath, "%s/%s", dirp->path, dirp->children[readdirCounter]);
   mfs_DIR* child = getInode(childPath);
 

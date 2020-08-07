@@ -13,3 +13,6 @@
     // Our file system does not remove dirctories that conatin files or folders.
     // It only remove empty folders/Dir
 
+8-6-2020
+    // Our file system has name limit of 20 chars for each file/folder
+
