@@ -129,10 +129,11 @@ uint64_t getFreeBlock(){
   PROBLEM: only if their requesting one block. In the event need more than one, their should
   be an argument to accept number of blocks like the example in line 154->162
   */
-  for (int index = 0; index < freeMapSize; index++)
+  for (int index = 0; index < diskSizeBlocks; index++)
   {
-    if (openVCB_p->freeMap[index] == 0)
-    {
+   // if (openVCB_p->freeMap[index] == 0)
+    if(findBit(openVCB_p->freeMap, index) == 0) {
+
       return index; //The position in the VolumeSpaceArray
     }
     
@@ -189,10 +190,8 @@ void initializeVCB() {
   }
   printf("------------------------Initializing VCB------------------------\n");
  
-  printf("\n\nDEBUGE-1\n\n");
-  //sprintf(openVCB_p->header, "%s", header); 
-  strcpy(openVCB_p->header, header);
-  printf("\n\nDEBUGE-2\n\n");
+  sprintf(openVCB_p->header, "%s", header); 
+ 
 
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;

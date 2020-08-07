@@ -139,6 +139,7 @@ int b_open (char * filename, int flags)
 			getParentPath(parentpath, filename);
 			mfs_DIR* parent = getInode(parentpath);
 			setParent(parent, inode);
+			writeInodes();
 
 		} else {
 
@@ -217,7 +218,7 @@ int b_write (int fd, char * buffer, int count)
 	 * reset buffer and copy second segment to buffer.
 	 */
 
-	if(secondCopyLength) {
+	if(secondCopyLength != 0) {
 		printf("Writing buffer to fd.\n"); 
 		uint64_t indexOfBlock = getFreeBlock();
 
@@ -229,6 +230,7 @@ int b_write (int fd, char * buffer, int count)
 		} else {
 
 			/* Write block of data to disk. */
+			printf("\n\nFCB buff:\n\n%s", fcb->buf);
 			writeBufferToInode(fcb->inode, fcb->buf, copyLength + secondCopyLength, indexOfBlock);
 		}
 		fcb->index = 0;
@@ -293,7 +295,8 @@ int b_read (int fd, char * buffer, int count)
 		if (part2 > bufSize)
 			{
 			int blocks = part2 / bufSize; // calculate number of blocks they want
-			bytesRead = read (fcbArray[fd].linuxFd, buffer+part1, blocks*bufSize);
+			//bytesRead = read (fcbArray[fd].linuxFd, buffer+part1, blocks*bufSize);
+			bytesRead = LBAread();
 			part3 = bytesRead;
 			part2 = part2 - part3;  //part 2 is now < BUFSIZE, or file is exusted
 			}				
@@ -334,7 +337,7 @@ void b_close (int fd)
 				printf("There is no enough free space!");
 				return;
 			} else {
-
+					printf("\n\nFCB buff:\n\n%s", fcb->buf);
 				/* Write any remaining bytes (index) to a new block. */
 				writeBufferToInode(fcb->inode, fcb->buf, fcb->index, indexOfBlock);
 			}

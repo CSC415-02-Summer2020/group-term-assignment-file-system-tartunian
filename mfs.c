@@ -621,13 +621,17 @@ int mfs_isDir(char * path) {
   return inode ? inode->type == I_DIR : 0;
 }
 
-int mfs_delete(char* filename) {
+int mfs_delete(char* filePath) {
   printf("---------------------------mfs_delete---------------------------\n");
   //Get inode
+  mfs_DIR* fileNode = getInode(filePath); 
   //Get parent
+  mfs_DIR* parentNode = getInode(fileNode->parent);
   //Remove child from parent
-  //Clear properties on child inode so it is not found in search.
-  //Set inuse to false
+  removeFromParent(parentNode, fileNode);
+  //Clear properties on child inode so it is not found in search & Set inuse to false.
+  freeInode(fileNode);
+  
   printf("----------------------------------------------------------------\n");
   return 0;
 }
