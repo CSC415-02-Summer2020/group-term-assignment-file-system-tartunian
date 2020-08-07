@@ -372,7 +372,11 @@ int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64
   /* Write buffered data to disk, update inode, write inodes to disk. */
   LBAwrite(buffer, 1, blockNumber);
 
+  /* Record the block number in the inode, reserve the block in the freeMap and write the VCB. */
   inode->directBlockPointers[freeIndex] = blockNumber;
+  setBit(getVCB()->freeMap, blockNumber);
+  writeVCB();
+
   inode->numDirectBlockPointers++;
   inode->sizeInBlocks++;
   inode->sizeInBytes += bufSizeBytes;

@@ -422,10 +422,10 @@ int cmd_cp2l (int argcnt, char *argvec[])
 	
 	
 	testfs_fd = b_open (src, O_RDONLY);
-	linux_fd = open (dest, O_WRONLY | O_CREAT | O_TRUNC);
+	linux_fd = open (dest, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	do 
 		{
-		readcnt = b_read (testfs_fd, buf, BUFFERLEN);
+		readcnt = readcnt = b_read (testfs_fd, buf, BUFFERLEN);
 		write (linux_fd, buf, readcnt);
 		} while (readcnt == BUFFERLEN);
 	b_close (testfs_fd);
@@ -665,6 +665,7 @@ void processcommand (char * cmd)
 		if (strcmp(dispatchTable[i].command, cmdv[0]) == 0)
 			{
 			dispatchTable[i].func(cmdc,cmdv);
+			printf("End dispatch\n");
 			free (cmdv);
 			cmdv = NULL;
 			return;
