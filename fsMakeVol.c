@@ -1,20 +1,22 @@
 /**************************************************************
-* Class:  CSC-415
-* Team: Team Penta
-* Student ID: N/A
-* Project: Basic File System
+* Class:  CSC-415-02 Summer 2020
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715
+* Project: Basic File System - PentaFS
 *
-* File: fsMakeVol.c
+* File: b_io.c
 *
 * Description: This program is used to create a volume for the
-*              Penta File System.
+*              Penta File System. It holds the free-space bit vector
+*		and the inodes on disk.
 *
 **************************************************************/
 
 #include "fsMakeVol.h"
 
-int initialized = 0;
+int initialized = 0; //variable to check if the VCB is initialized
 
+//Variables that hold the information of our volume control block
 char header[16] = "*****PentaFS****";
 uint64_t volumeSize;
 uint64_t blockSize;
@@ -26,7 +28,9 @@ uint32_t totalInodes;
 uint32_t totalInodeBlocks;
 uint32_t freeMapSize;
 
-mfs_VCB* openVCB_p;
+mfs_VCB* openVCB_p; //pointer to our volume control block
+
+/* Methods explained in the fsMakeVol.h file */
 
 uint64_t ceilDiv(uint64_t a, uint64_t b) {
   /* Rounds up integer division. */
@@ -39,7 +43,7 @@ int allocateVCB(mfs_VCB** vcb_p) {
 }
 
 uint64_t fsRead(void* buf, uint64_t blockCount, uint64_t blockPosition) {
-  if(!initialized) {
+  if(!initialized) { //make sure it's initialized or else we reach segmentation faults
     printf("fsRead: System not initialized.\n");
     return 0;
   }
@@ -83,77 +87,20 @@ void fsFree(void* buf, uint64_t blockCount, uint64_t blockPosition) {
   writeVCB();
 }
 
-
-/************************************/
-//  DONE AARON!! MAYBE!
-/************************************/
-
-/* Checks if there is enough contiguous blocks for a requested number of blocks
-return 0 for free 1 for full */
-// loop over freeMap
-  // increment count when there is a free block
-      // (if freemap[i] == 0)
-      // else if freemap[i] != 0
-      // count = 0;
-
-
-
-// merge checkIfStorageIsAvailable() and getFreeBlock() toghather then return the first free block in that contiguous span of blocks
-// return -1 if dose not exists!
-
-
-  // if count == numberOfRequestedBlocks return 1
-// int checkIfStorageIsAvailable(int numberOfRequestedBlocks){ //roughly scratched up, feel free to change or edit
-//   int count = 0;
-//   for( int i = 0; i < freeMapSize; i++ ) {
-	
-// 	if( count == numberOfRequestedBlocks ) { //returns 1 when count does = the requested amount
-// 	  return 1;
-// 	}
-	
-// 	if( openVCB_p->freeMap[i] == 0 ) { //increment count for each sequential 0
-// 	  count++;
-// 	}
-	
-// 	if( count > 0 && openVCB_p->freeMap[i] == 1 ) { //if bit = 1, reset count, only resets when count > 0
-// 	  count = 0; //could reset count only when openVCB_p->freeMap[i] == 1
-// 	}
-	
-//   }
-//   return 0;
-// }
-//Loop over freeMap. Return position of first free block
+//method that gets the next free block, however it does not look for contiguous ones, just the next available one
+//if none available, return a -1 to show that
 uint64_t getFreeBlock(){
-  
-    /* 
-  PROBLEM: only if their requesting one block. In the event need more than one, their should
-  be an argument to accept number of blocks like the example in line 154->162
-  */
   for (int index = 0; index < diskSizeBlocks; index++)
   {
-   // if (openVCB_p->freeMap[index] == 0)
     if(findBit(openVCB_p->freeMap, index) == 0) {
 
       return index; //The position in the VolumeSpaceArray
     }
     
   }
-  /*
-  for (int index = 0; index < freeMapSize; index++)
-  {
-    if (openVCB_p->freeMap[index] == 0 && openVCB_p->freeMap[index + 1])
-    {
-      return index;
-    }
-  }
-*/
-return -1;
+
+ return -1;
 }
-
-/************************************/
-//  AARON JOBS ENDS!
-/************************************/
-
 
 uint64_t readVCB() {
   if(!initialized) {
@@ -192,7 +139,6 @@ void initializeVCB() {
  
   sprintf(openVCB_p->header, "%s", header); 
  
-
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;
   openVCB_p->blockSize = blockSize;
@@ -294,7 +240,6 @@ void printVCB() {
   printf("VCB Size: %d bytes\n", size);
 }
 
-//8-3-20 Taylor: Modified totalInodes calculated to account for the size of the mfs_DIR + DATA_BLOCKS_PER_INODE
 void init(uint64_t _volumeSize, uint64_t _blockSize) {
   printf("------------------------------Init------------------------------\n");
   printf("volumeSize: %ld\n", volumeSize = _volumeSize);

@@ -1,15 +1,14 @@
 /**************************************************************
 * Class:  CSC-415
-* Name: Professor Bierman
-* Student ID: N/A
-* Project: Basic File System
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715
+* Project: Basic File System - PentaFS
 *
-* File: fsLow.h
+* File: mfs.h
 *
 * Description: 
-*	This is the file system interface.
-*	This is the interface needed by the driver to interact with
-*	your filesystem.
+*	This is the file system's method prototypes.
+*	These methods initialize, change and hold information pertaining to files and folders in our file system.
 *
 **************************************************************/
 #ifndef _MFS_H
@@ -20,13 +19,13 @@
 #include "fsMakeVol.h"
 #define MAX_FILEPATH_SIZE 225
 #define	MAX_FILENAME_SIZE 20
-#define MAX_DIRECTORY_DEPTH	10	//8-1-20 Taylor: Added to limit directory depths
+#define MAX_DIRECTORY_DEPTH 10
 #define MAX_NUMBER_OF_CHILDREN 64		
 #define MAX_DATABLOCK_POINTERS	64
 #define INVALID_DATABLOCK_POINTER -1
 #define INVALID_INODE_NAME	"unused_inode"
 
-// The following should be in b_io.h but included for for completness
+// The following should be in b_io.h but included for for completeness
 #ifndef _B_IO_H
 #define _B_IO_H
 #include <fcntl.h>
@@ -78,8 +77,6 @@ typedef struct
 
 } mfs_DIR;
 
-//8-2-20 Taylor: added mfs prefix to readdir, opendir, closedir per Professor's changes
-// Added mfs_isFile, mfs_isFile and mfs_delete
 // Changed mfs_setcwd to return an int instead of char*
 int mfs_mkdir(const char *pathname, mode_t mode);
 int mfs_rmdir(const char *pathname);
@@ -98,31 +95,29 @@ int mfs_delete(char* filename);    //removes a file
 // Added Functions by Team Penta //
 //*******************************//
 
-void mfs_init();																	//8-3-20 Taylor: Changed from fsFileOrgInit
+void mfs_init();
 void writeInodes();
-void mfs_close();																		//8-3-20 Taylor: Changed from fsFileOrgEnd
+void mfs_close();
 
 void parseFilePath(const char *pathname);
-void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
+void printFilePath();
+
 mfs_DIR* getInode(const char *pathname);
 mfs_DIR* getFreeInode();
-void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_setcwd
+void printCurrentDirectoryPath();
 
-/* ADDED ON 8-3-2020 */
-// void updateInode(mfs_DIR* inode);
-mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
-int checkValidityOfPath();							   // Duy
-int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
-char* getParentPath(char* buf ,const char* path);		// Duy
+mfs_DIR* createInode(InodeType type,const char* path);
+int checkValidityOfPath();
+int setParent(mfs_DIR* parent, mfs_DIR* child);
+char* getParentPath(char* buf ,const char* path);
 
-/* ADDED ON 8-4-20 */
 mfs_DIR* getInodeByID(int id);
 
 /* Writes a buffer to a provided data block, adds blockNumber to inode, updates size and timestamps
  * of inode, writes inodes to disk. Returns number of blocks written. */
 int writeBufferToInode(mfs_DIR* inode, char* buffer, size_t bufSizeBytes, uint64_t blockNumber);
 
-void freeInode(mfs_DIR* node); // Wameedh - rest inode proprties and set it free for reuse
+void freeInode(mfs_DIR* node);
 //************************************//
 // End of our Functions by Team Penta //
 //***********************************//

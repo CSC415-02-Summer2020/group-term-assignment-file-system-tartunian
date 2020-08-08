@@ -1,13 +1,12 @@
 /**************************************************************
-* Class:  CSC-415-0# Summer 2020
-* Name: Taylor Artunian
-* Student ID: 920351715
-* Project: Assignment 2 – Buffered I/O
+* Class:  CSC-415-02 Summer 2020
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715
+* Project: Basic File System - PentaFS
 *
 * File: b_io.h
 *
-* Description: Header for library which buffers reads and writes
-* to secondary storage in order to reduce overall I/O operations.
+* Description: The header file of the buffered I/O module that contains the prototypes of the methods.
 *
 **************************************************************/
 

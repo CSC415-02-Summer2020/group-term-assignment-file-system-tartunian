@@ -1,16 +1,15 @@
 /**************************************************************
 * Class:  CSC-415
-* Team: Team Penta
-* Student ID: N/A
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715
 * Project: Basic File System
 *
-* File: fsMakeVol.c
+* File: fsMakeVol.h
 *
-* Description: This is a set of routines used to create a volume
+* Description: This is the header file that holds the set of routines used to create a volume
 *              for the Penta File System.
 *
 **************************************************************/
-
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -37,7 +36,7 @@
 #ifndef _MAKEVOL
 #define _MAKEVOL
 
-typedef struct {
+typedef struct { //structure to hold all the data of our VCB for ease of access
   char header[16];
   uint64_t volumeSize;
   uint64_t blockSize;
@@ -52,6 +51,7 @@ typedef struct {
   uint32_t freeMap[];
 } mfs_VCB;
 #endif
+
 /* Utility function for rounding up integer division. */
 uint64_t ceilDiv(uint64_t, uint64_t);
 
