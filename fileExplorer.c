@@ -6,7 +6,7 @@
 *
 * File: fileExplorer.c
 *
-* Description: 
+* Description: Opens the volume and print out the inode. used for testing. 
 *
 **************************************************************/
 
