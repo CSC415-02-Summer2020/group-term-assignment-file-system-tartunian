@@ -45,7 +45,6 @@ typedef enum { I_FILE, I_DIR, I_UNUSED } InodeType;
 
 char* getInodeTypeName(char* buf, InodeType type);
 
-//8-1-20 Taylor: Changed type from int to InodeType
 typedef struct
 {
 		uint64_t id; // holds the index of the inode in the inodes array 
