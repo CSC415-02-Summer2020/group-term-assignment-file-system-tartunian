@@ -1,7 +1,6 @@
 /**************************************************************
 * Class:  CSC-415-02 Summer 2020
 * Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
-* Student ID: 917446249, 920351715, 
 * Project: Basic File System - PentaFS
 *
 * File: b_io.c
@@ -137,14 +136,8 @@ void initializeVCB() {
   }
   printf("------------------------Initializing VCB------------------------\n");
  
-<<<<<<< HEAD
   sprintf(openVCB_p->header, "%s", header); 
  
-=======
-
-  sprintf(openVCB_p->header, "%s", header); 
-
->>>>>>> 48b6c6009897a7a946ce2eaeeedffa3c4ef220ed
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;
   openVCB_p->blockSize = blockSize;
