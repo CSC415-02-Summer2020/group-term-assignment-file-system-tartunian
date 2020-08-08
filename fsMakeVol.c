@@ -137,8 +137,14 @@ void initializeVCB() {
   }
   printf("------------------------Initializing VCB------------------------\n");
  
+<<<<<<< HEAD
   sprintf(openVCB_p->header, "%s", header); 
  
+=======
+
+  sprintf(openVCB_p->header, "%s", header); 
+
+>>>>>>> 48b6c6009897a7a946ce2eaeeedffa3c4ef220ed
   /* Set information on volume sizes and block locations. */
   openVCB_p->volumeSize = volumeSize;
   openVCB_p->blockSize = blockSize;
