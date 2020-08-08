@@ -1,6 +1,7 @@
 /**************************************************************
 * Class: CSC-415
 * Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249 (Duy), 920351715 (Taylor), 920678405 (Wameedh)
 * Project: Basic File System - PentaFS
 *
 * File: fileExplorer.c
