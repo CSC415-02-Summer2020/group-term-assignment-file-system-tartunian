@@ -55,7 +55,7 @@ char requestedFilePath[MAX_FILEPATH_SIZE];
 char requestedFilePathArray[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
 int requestedFilePathArraySize = 0;
 
-void parseFilePath(const char *pathname) { 
+mfs_ParsedPath* parseFilePath(const char *pathname, const char* buf) { 
   printf("------------------------Parsing File Path-----------------------\n");
   
   printf("Input: %s\n", pathname);
@@ -78,10 +78,21 @@ void parseFilePath(const char *pathname) {
   int isParentRelative = !strcmp(token, "..");
   // Fourth case: relative to cwd
 
+  /* Create an mfs_ParsedPath instance. */
+  mfs_ParsedPath* parsedPath_p = malloc(sizeof(mfs_ParsedPath));
 
+  /* If the path is not absolute, copy the cwd into the parsed path. If it is relative to the parent of
+   * the cwd (..) then omit the cwd from the parsed path.
+   */
   if(token && !isAbsolute) {
     int maxLevel = isParentRelative ? currentDirectoryPathArraySize - 1 : currentDirectoryPathArraySize;
     for(int i=0; i<maxLevel; i++) {
+
+      /* Copy to the parsed path instance. */
+      strcpy(parsedPath_p->parts[i], currentDirectoryPathArray[i]);
+      parsedPath_p->depth++;
+
+      /* Copy to the global var. (Old code). */
       strcpy(requestedFilePathArray[i], currentDirectoryPathArray[i]);
       sprintf(requestedFilePath, "%s/%s", requestedFilePath, currentDirectoryPathArray[i]);
       requestedFilePathArraySize++;
@@ -95,6 +106,11 @@ void parseFilePath(const char *pathname) {
 
   while(token && requestedFilePathArraySize < MAX_DIRECTORY_DEPTH) {
 
+    /* Copy to the parsed path instance. */
+    strcpy(parsedPath_p->parts[parsedPath_p->depth], token);
+    parsedPath_p->depth++;
+
+    /* Copy to the global var. (Old code). */
     strcpy(requestedFilePathArray[requestedFilePathArraySize], token);
     sprintf(requestedFilePath, "%s/%s", requestedFilePath, token);
 
@@ -106,9 +122,14 @@ void parseFilePath(const char *pathname) {
 
   }
 
+  /* Send a copy of the parsed path to the caller. */
+  strcpy(buf, requestedFilePath);
+  
   printf("Output: %s\n", requestedFilePath);
 
-printf("----------------------------------------------------------------\n");
+  return parsedPath_p;
+
+  printf("----------------------------------------------------------------\n");
 
 }
 
@@ -310,7 +331,8 @@ char* getParentPath(char* buf ,const char* path){
     //Copy parent path to buf, return buf
   
   /* Parse the path. */
-  parseFilePath(path);
+  char parsedFilePath[MAX_FILEPATH_SIZE];
+  parseFilePath(path, parsedFilePath);
 
   char parentPath[MAX_FILEPATH_SIZE] = "";
 
@@ -444,7 +466,8 @@ int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -
   // Add info to parent if necessary
   // check if the fiolder already exists
   char parentPath[256] = "";
-  parseFilePath(pathname);
+  char parsedPathName[MAX_FILEPATH_SIZE];
+  parseFilePath(pathname, parsedPathName);
 
   for (size_t i = 0; i < requestedFilePathArraySize - 1; i++) {
      strcat(parentPath, "/");
@@ -454,7 +477,7 @@ int mfs_mkdir(const char *pathname, mode_t mode) { // return 0 for sucsess and -
   mfs_DIR* parent = getInode(parentPath);
   if (parent) {
     for (size_t i = 0; i < parent->numChildren; i++){
-      if(strcmp(parent->children[i], requestedFilePathArray[requestedFilePathArraySize - 1])){
+      if(!strcmp(parent->children[i], requestedFilePathArray[requestedFilePathArraySize - 1])){
           printf("Folder already exists!\n");
           printf("----------------------------------------------------------------\n");
           return -1;
@@ -513,12 +536,15 @@ struct mfs_dirent* mfs_readdir(mfs_DIR *dirp) {
   printf("--------------------------mfs_readdir---------------------------\n");
   
   if(readdirCounter == dirp->numChildren) {
+    printf("End of directory.\n");
     readdirCounter = 0;
     return NULL;
   }
   
-  /* Get child inode. */
+  /* Get next child inode of dirp. */
   char childPath[MAX_FILEPATH_SIZE];
+  char* childName = dirp->children[readdirCounter];
+
   sprintf(childPath, "%s/%s", dirp->path, dirp->children[readdirCounter]);
   mfs_DIR* child = getInode(childPath);
 
@@ -568,7 +594,8 @@ char * mfs_getcwd(char *buf, size_t size) {
 int mfs_setcwd(char *buf) {
   printf("---------------------------mfs_setcwd---------------------------\n");
   
-  parseFilePath(buf);
+  char parsedPath[MAX_FILEPATH_SIZE];
+  parseFilePath(buf, parsedPath);
 
   /* Check if inode exists. */
   mfs_DIR* inode = getInode(requestedFilePath);

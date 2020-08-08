@@ -78,6 +78,12 @@ typedef struct
 
 } mfs_DIR;
 
+typedef struct
+{
+	char parts[MAX_DIRECTORY_DEPTH][MAX_FILENAME_SIZE];
+	int depth;
+} mfs_ParsedPath;
+
 //8-2-20 Taylor: added mfs prefix to readdir, opendir, closedir per Professor's changes
 // Added mfs_isFile, mfs_isFile and mfs_delete
 // Changed mfs_setcwd to return an int instead of char*
@@ -102,7 +108,7 @@ void mfs_init();																	//8-3-20 Taylor: Changed from fsFileOrgInit
 void writeInodes();
 void mfs_close();																		//8-3-20 Taylor: Changed from fsFileOrgEnd
 
-void parseFilePath(const char *pathname);
+mfs_ParsedPath* parseFilePath(const char *pathname, const char* buf);
 void printFilePath();															//8-1-20 Taylor: Added to test parseFilePath
 mfs_DIR* getInode(const char *pathname);
 mfs_DIR* getFreeInode();
@@ -113,6 +119,7 @@ void printCurrentDirectoryPath();									//8-1-20 Taylor: Added to test mfs_set
 mfs_DIR* createInode(InodeType type,const char* path); // Wameedh!
 int checkValidityOfPath();							   // Duy
 int setParent(mfs_DIR* parent, mfs_DIR* child);			// Duy
+int removeFromParent(mfs_DIR* parent, mfs_DIR* child);
 char* getParentPath(char* buf ,const char* path);		// Duy
 
 /* ADDED ON 8-4-20 */

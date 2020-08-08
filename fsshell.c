@@ -336,9 +336,70 @@ int cmd_cp (int argcnt, char *argvec[])
 ****************************************************/
 int cmd_mv (int argcnt, char *argvec[])
 	{
-#if (CMDMV_ON == 1)				
-	return -99;
-	// **** TODO ****  For you to implement	
+#if (CMDMV_ON == 1)
+	if (argcnt != 3)
+		{
+		printf("Usage: mv sourceFile destFile\n");
+		}
+	else
+		{
+		char* sourcePath = argvec[1];
+		char* destPath = argvec[2];
+		printf("Moving %s to %s\n", sourcePath, destPath);
+		
+		/* Check if file is valid. */
+		char parsedSourcePathBuf[MAX_FILEPATH_SIZE];
+		mfs_ParsedPath* parsedSourcePath_p = parseFilePath(sourcePath, parsedSourcePathBuf);
+
+		mfs_DIR* inode = getInode(parsedSourcePathBuf);
+		if(!inode) {
+			printf("Source file %s does not exist.\n", sourcePath);
+			return -1;
+		}
+
+		/* Get the original parent. */
+		char sourcePathParentBuf[MAX_FILEPATH_SIZE];
+		getParentPath(sourcePathParentBuf, sourcePath);
+		mfs_DIR* sourceParent = getInode(sourcePathParentBuf);
+
+		/* Check if destination path already exists. */
+		char parsedDestPathBuf[MAX_FILEPATH_SIZE];
+		mfs_ParsedPath* parsedDestPath_p = parseFilePath(destPath, parsedDestPathBuf);
+
+		if(getInode(parsedDestPathBuf)) {
+			printf("Destination file %s already exists.\n", destPath);
+			return -1;
+		}
+
+		/* Check validity of destination folder/parent path. */
+		char destPathParentBuf[MAX_FILEPATH_SIZE];
+		getParentPath(destPathParentBuf, destPath);
+		mfs_DIR* destParent = getInode(destPathParentBuf);
+		if(!destParent) {
+			printf("Destination folder %s does not exist.\n", destPathParentBuf);
+			return -1;
+		}
+
+		/* Get the dest filename. */
+		printf("Setting filename %s to %s\n", parsedSourcePath_p->parts[parsedSourcePath_p->depth-1],
+																					parsedDestPath_p->parts[parsedDestPath_p->depth-1]);
+		
+		/* Remove from existing parent, change name, set new parent. */
+
+		removeFromParent(sourceParent, inode);
+
+		char* destName = parsedDestPath_p->parts[parsedDestPath_p->depth - 1];
+		strcpy(inode->name, destName);
+
+		setParent(destParent, inode);
+
+		writeInodes();
+
+		/* Free dynamic structs. */
+		free(parsedSourcePath_p);
+		free(parsedDestPath_p);
+
+		}
 #endif
 	}
 
@@ -425,7 +486,7 @@ int cmd_cp2l (int argcnt, char *argvec[])
 	linux_fd = open (dest, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	do 
 		{
-		readcnt = readcnt = b_read (testfs_fd, buf, BUFFERLEN);
+		readcnt = b_read (testfs_fd, buf, BUFFERLEN);
 		write (linux_fd, buf, readcnt);
 		} while (readcnt == BUFFERLEN);
 	b_close (testfs_fd);

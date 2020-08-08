@@ -235,6 +235,11 @@ int b_write (int fd, char * buffer, int count)
 			/* Write block of data to disk. */
 			printf("\n\nFCB buff:\n\n%s", fcb->buf);
 			writeBufferToInode(fcb->inode, fcb->buf, copyLength + secondCopyLength, indexOfBlock);
+
+			/* Clear buffer. */
+			free(fcb->buf);
+			fcb->buf = calloc(1, getVCB()->blockSize);
+
 		}
 		fcb->index = 0;
 		printf("Copying second segment to fcb->buf+%d: %d bytes\n", fcb->index, secondCopyLength);
@@ -288,12 +293,21 @@ int b_read (int fd, char * buffer, int count) {
 			return 0;
 		}
 
+		/* Clear the existing buffer. */
+		free(fcb->buf);
+		fcb->buf = calloc(1, getVCB()->blockSize);
+
+		printf("Cleared buffer. Block is free?.\n");
+		printf("*********************************************************\n");
+		printf("%s\n", fcb->buf);
+		printf("*********************************************************\n");
+
 		/* Read the next data block pointer and reset the index. */
 		int blockNumber = fcb->inode->directBlockPointers[fcb->blockIndex];
     LBAread(fcb->buf, 1, blockNumber);																			//read(fcb->linuxFileDescriptor, fcb->buffer, FILE_BUFFER_SIZE);
 		fcb->blockIndex++;
 
-		printf("Read new data.\n");
+		printf("Read new data from block %d.\n", blockNumber);
 		printf("*********************************************************\n");
 		printf("%s\n", fcb->buf);
 		printf("*********************************************************\n");
@@ -336,6 +350,11 @@ void b_close (int fd)
 				/* Write any remaining bytes (index) to a new block. */
 				printf("Writing remaining bytes.\n");
 				writeBufferToInode(fcb->inode, fcb->buf, fcb->index, indexOfBlock);
+
+				/* Clear buffer. */
+				free(fcb->buf);
+				fcb->buf = calloc(1, getVCB()->blockSize);
+
 			}
 	}
 
