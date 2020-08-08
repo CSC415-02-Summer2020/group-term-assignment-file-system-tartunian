@@ -1,3 +1,15 @@
+/**************************************************************
+* Class: CSC-415
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715, 
+* Project: Basic File System - PentaFS
+*
+* File: fileExplorer.c
+*
+* Description: 
+*
+**************************************************************/
+
 #include "fsMakeVol.h"
 #include "mfs.h"
 

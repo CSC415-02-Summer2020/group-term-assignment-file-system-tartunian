@@ -1,8 +1,8 @@
 /**************************************************************
 * Class:  CSC-415
-* Name: Professor Bierman
-* Student ID: N/A
-* Project: Basic File System
+* Name: Professor Bierman, Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715, 
+* Project: Basic File System - PentaFS
 *
 * File: fsShell.c
 *

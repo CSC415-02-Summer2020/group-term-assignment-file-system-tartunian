@@ -1,3 +1,15 @@
+/**************************************************************
+* Class: CSC-415
+* Name: Team Penta - Duy Nguyen, Taylor Artunian, Wameedh Mohammed Ali
+* Student ID: 917446249, 920351715, 
+* Project: Basic File System - PentaFS
+*
+* File: fsFormat.c
+*
+* Description: This file will format a volume on the disk.
+*
+**************************************************************/
+
 #include "mfs.h"
 
 int main (int argc, char* argv[]) {
